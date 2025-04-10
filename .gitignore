@@ -153,3 +153,4 @@ app.*.symbols
 
 # environement
 .env*
+!.env.example
