@@ -1,31 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 class ThemeCubit extends HydratedCubit<ThemeMode> {
   ThemeCubit() : super(ThemeMode.system);
 
-  void selectThemeMode(ThemeMode themeMode) {
-    emit(themeMode);
+  /// Get the actual system [Brightness].
+  Brightness get systemBrightness {
+    return SchedulerBinding.instance.platformDispatcher.platformBrightness;
   }
 
-  void nextThemeMode() {
+  void nextThemeMode() {}
+
+  /// Set the cubit [ThemeMode] to the selected [ThemeMode].
+  void selectThemeMode(ThemeMode themeMode) => emit(themeMode);
+
+  /// Toggle the cubit [ThemeMode] between [ThemeMode.light] and [ThemeMode.dark].
+  ///
+  /// Set the cubit [ThemeMode] to system brightness oposite when toggling from [ThemeMode.system].
+  void toggleThemeMode() {
     switch (state) {
-      case ThemeMode.dark:
-        emit(ThemeMode.light);
-      case ThemeMode.light:
-        emit(ThemeMode.system);
       case ThemeMode.system:
-        emit(ThemeMode.dark);
+        return emit(
+          systemBrightness == Brightness.dark
+              ? ThemeMode.light
+              : ThemeMode.dark,
+        );
+
+      case ThemeMode.light:
+        return emit(ThemeMode.dark);
+
+      case ThemeMode.dark:
+        return emit(ThemeMode.light);
     }
   }
 
   @override
   ThemeMode? fromJson(Map<String, dynamic> json) {
-    return ThemeMode.values[json['theme'] as int];
+    return ThemeMode.values[json['theme_mode'] as int];
   }
 
   @override
   Map<String, dynamic>? toJson(ThemeMode state) {
-    return {'theme': state.index};
+    return {'theme_mode': state.index};
   }
 }
