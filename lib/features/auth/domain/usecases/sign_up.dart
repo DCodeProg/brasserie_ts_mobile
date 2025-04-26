@@ -8,7 +8,7 @@ import '../repositories/auth_repository.dart';
 class SignUp implements UseCase<User, SignUpParams> {
   final AuthRepository authRepository;
 
-  SignUp(this.authRepository);
+  SignUp({required this.authRepository});
 
   @override
   Future<Either<Failure, User>> call(params) async {

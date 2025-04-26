@@ -8,7 +8,7 @@ import '../repositories/auth_repository.dart';
 class SignInWithPassword implements UseCase<User, SignInWithPasswordParams> {
   final AuthRepository authRepository;
 
-  SignInWithPassword(this.authRepository);
+  SignInWithPassword({required this.authRepository});
 
   @override
   Future<Either<Failure, User>> call(params) async {

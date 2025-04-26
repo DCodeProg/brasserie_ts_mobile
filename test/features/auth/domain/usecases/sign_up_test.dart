@@ -1,8 +1,8 @@
-import 'package:brasserie_ts_mobile/core/errors/failures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:brasserie_ts_mobile/core/errors/failures.dart';
 import 'package:brasserie_ts_mobile/features/auth/domain/entities/user.dart';
 import 'package:brasserie_ts_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:brasserie_ts_mobile/features/auth/domain/usecases/sign_up.dart';
@@ -15,7 +15,7 @@ void main() {
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
-    signUp = SignUp(mockAuthRepository);
+    signUp = SignUp(authRepository: mockAuthRepository);
   });
 
   final String tEmail = "john.doe@host-dcode.fr";
@@ -44,7 +44,7 @@ void main() {
         prenom: tPrenom,
         dateNaissance: tDateNaissance,
       ),
-    ).thenAnswer((_) async => Right(tUser));
+    ).thenAnswer((_) async => right(tUser));
 
     // act
     final res = await signUp(
@@ -58,7 +58,7 @@ void main() {
     );
 
     // assert
-    expect(res, equals(Right(tUser)));
+    expect(res, equals(right(tUser)));
     verify(
       () => mockAuthRepository.signUp(
         email: tEmail,
@@ -84,7 +84,7 @@ void main() {
           prenom: tPrenom,
           dateNaissance: tDateNaissance,
         ),
-      ).thenAnswer((_) async => Left(tFailure));
+      ).thenAnswer((_) async => left(tFailure));
 
       // act
       final res = await signUp(
@@ -98,7 +98,7 @@ void main() {
       );
 
       // assert
-      expect(res, equals(Left(tFailure)));
+      expect(res, equals(left(tFailure)));
       verify(
         () => mockAuthRepository.signUp(
           email: tEmail,

@@ -1,8 +1,8 @@
-import 'package:brasserie_ts_mobile/core/errors/failures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:brasserie_ts_mobile/core/errors/failures.dart';
 import 'package:brasserie_ts_mobile/features/auth/domain/entities/user.dart';
 import 'package:brasserie_ts_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:brasserie_ts_mobile/features/auth/domain/usecases/sign_in_with_password.dart';
@@ -15,7 +15,7 @@ void main() {
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();
-    signInWithPassword = SignInWithPassword(mockAuthRepository);
+    signInWithPassword = SignInWithPassword(authRepository: mockAuthRepository);
   });
 
   final String tEmail = "john.doe@host-dcode.fr";
@@ -37,7 +37,7 @@ void main() {
         email: tEmail,
         password: tPassword,
       ),
-    ).thenAnswer((_) async => Right(tUser));
+    ).thenAnswer((_) async => right(tUser));
 
     // act
     final res = await signInWithPassword(
@@ -45,7 +45,7 @@ void main() {
     );
 
     // assert
-    expect(res, equals(Right(tUser)));
+    expect(res, equals(right(tUser)));
     verify(
       () => mockAuthRepository.signInWithPassword(
         email: tEmail,
@@ -65,7 +65,7 @@ void main() {
           email: tEmail,
           password: tPassword,
         ),
-      ).thenAnswer((_) async => Left(tFailure));
+      ).thenAnswer((_) async => left(tFailure));
 
       // act
       final res = await signInWithPassword(
@@ -73,7 +73,7 @@ void main() {
       );
 
       // assert
-      expect(res, equals(Left(tFailure)));
+      expect(res, equals(left(tFailure)));
       verify(
         () => mockAuthRepository.signInWithPassword(
           email: tEmail,
