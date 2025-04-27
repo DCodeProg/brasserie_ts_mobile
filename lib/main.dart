@@ -21,7 +21,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = createTextTheme(context, "Noto Sans", "Rye");
+    TextTheme textTheme = createTextTheme(
+      context,
+      bodyFontString: "Noto Sans",
+      displayFontString: "Rye",
+    );
     MaterialTheme theme = MaterialTheme(textTheme);
 
     return BlocBuilder<ThemeCubit, ThemeMode>(
