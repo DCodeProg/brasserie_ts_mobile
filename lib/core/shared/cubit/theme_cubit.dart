@@ -10,7 +10,34 @@ class ThemeCubit extends HydratedCubit<ThemeMode> {
     return SchedulerBinding.instance.platformDispatcher.platformBrightness;
   }
 
-  void nextThemeMode() {}
+  /// Go to the next [ThemeMode] depending on the system brightness
+  ///
+  /// Order:
+  /// - system light: system - dark - light
+  /// - system dark: system - light - dark
+  void nextThemeMode() {
+    switch (systemBrightness) {
+      case Brightness.dark:
+        switch (state) {
+          case ThemeMode.system:
+            return emit(ThemeMode.light);
+          case ThemeMode.light:
+            return emit(ThemeMode.dark);
+          case ThemeMode.dark:
+            return emit(ThemeMode.system);
+        }
+
+      case Brightness.light:
+        switch (state) {
+          case ThemeMode.system:
+            return emit(ThemeMode.dark);
+          case ThemeMode.dark:
+            return emit(ThemeMode.light);
+          case ThemeMode.light:
+            return emit(ThemeMode.system);
+        }
+    }
+  }
 
   /// Set the cubit [ThemeMode] to the selected [ThemeMode].
   void selectThemeMode(ThemeMode themeMode) => emit(themeMode);

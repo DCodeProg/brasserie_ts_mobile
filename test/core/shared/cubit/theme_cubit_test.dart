@@ -97,17 +97,110 @@ void main() {
   group("nextThemeMode", () {
     test(
       "should emits ThemeMode.dark when previous state is ThemeMode.system if system is in light mode",
-      () {},
+      () {
+        // arrange
+        final binding = TestWidgetsFlutterBinding.ensureInitialized();
+        binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
+
+        themeCubit.emit(ThemeMode.system);
+
+        // act
+        themeCubit.nextThemeMode();
+
+        // assert
+        expect(themeCubit.state, equals(ThemeMode.dark));
+      },
+    );
+
+    test(
+      "should emits ThemeMode.light when previous state is ThemeMode.dark if system is in light mode",
+      () {
+        // arrange
+        final binding = TestWidgetsFlutterBinding.ensureInitialized();
+        binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
+
+        themeCubit.emit(ThemeMode.dark);
+
+        // act
+        themeCubit.nextThemeMode();
+
+        // assert
+        expect(themeCubit.state, equals(ThemeMode.light));
+      },
+    );
+
+    test(
+      "should emits ThemeMode.system when previous state is ThemeMode.light if system is in light mode",
+      () {
+        // arrange
+        final binding = TestWidgetsFlutterBinding.ensureInitialized();
+        binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.light;
+
+        themeCubit.emit(ThemeMode.light);
+
+        // act
+        themeCubit.nextThemeMode();
+
+        // assert
+        expect(themeCubit.state, equals(ThemeMode.system));
+      },
     );
 
     test(
       "should emits ThemeMode.light when previous state is ThemeMode.system if system is in dark mode",
-      () {},
+      () {
+        // arrange
+        final binding = TestWidgetsFlutterBinding.ensureInitialized();
+        binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.dark;
+
+        themeCubit.emit(ThemeMode.system);
+
+        // act
+        themeCubit.nextThemeMode();
+
+        // assert
+        expect(themeCubit.state, equals(ThemeMode.light));
+      },
     );
 
     test(
       "should emits ThemeMode.dark when previous state is ThemeMode.light if system is in dark mode",
-      () {},
+      () {
+        // arrange
+        final binding = TestWidgetsFlutterBinding.ensureInitialized();
+        binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.dark;
+
+        themeCubit.emit(ThemeMode.light);
+
+        // act
+        themeCubit.nextThemeMode();
+
+        // assert
+        expect(themeCubit.state, equals(ThemeMode.dark));
+      },
+    );
+
+    test(
+      "should emits ThemeMode.system when previous state is ThemeMode.dark if system is in dark mode",
+      () {
+        // arrange
+        final binding = TestWidgetsFlutterBinding.ensureInitialized();
+        binding.platformDispatcher.platformBrightnessTestValue =
+            Brightness.dark;
+
+        themeCubit.emit(ThemeMode.dark);
+
+        // act
+        themeCubit.nextThemeMode();
+
+        // assert
+        expect(themeCubit.state, equals(ThemeMode.system));
+      },
     );
   });
 
