@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 TextTheme createTextTheme(
-  BuildContext context,
-  String bodyFontString,
-  String displayFontString,
-) {
+  BuildContext context, {
+
+  required String bodyFontString,
+  required String displayFontString,
+}) {
   TextTheme baseTextTheme = Theme.of(context).textTheme;
   TextTheme bodyTextTheme = GoogleFonts.getTextTheme(
     bodyFontString,
@@ -16,6 +17,12 @@ TextTheme createTextTheme(
     baseTextTheme,
   );
   TextTheme textTheme = displayTextTheme.copyWith(
+    headlineLarge: bodyTextTheme.headlineLarge,
+    headlineMedium: bodyTextTheme.headlineMedium,
+    headlineSmall: bodyTextTheme.headlineSmall,
+    titleLarge: bodyTextTheme.titleLarge,
+    titleMedium: bodyTextTheme.titleMedium,
+    titleSmall: bodyTextTheme.titleSmall,
     bodyLarge: bodyTextTheme.bodyLarge,
     bodyMedium: bodyTextTheme.bodyMedium,
     bodySmall: bodyTextTheme.bodySmall,
