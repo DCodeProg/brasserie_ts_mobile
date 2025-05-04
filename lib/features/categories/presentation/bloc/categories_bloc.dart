@@ -12,10 +12,11 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
 
   CategoriesBloc({required this.fetchAllCategories})
     : super(CategoriesInitialState()) {
-    add(CategoriesFetchAllCategoriesEvent());
     on<CategoriesFetchAllCategoriesEvent>(
       (event, emit) => _onFetchAllCategories(event, emit),
     );
+
+    add(CategoriesFetchAllCategoriesEvent());
   }
 
   Future<void> _onFetchAllCategories(
@@ -30,5 +31,14 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
       (l) => emit(CategoriesFailureState(message: l.message)),
       (r) => emit(CategoriesLoadedState(categories: r)),
     );
+  }
+
+  Category? getCategoryById(String categoryId) {
+    if (state is CategoriesLoadedState) {
+      return (state as CategoriesLoadedState).categories
+          .where((category) => category.id == categoryId)
+          .first;
+    }
+    return null;
   }
 }
