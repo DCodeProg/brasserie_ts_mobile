@@ -12,6 +12,7 @@ class ProductModel extends Product {
     required super.imageUrl,
     required super.volume,
     required super.degre,
+    required super.quantite,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,6 +25,7 @@ class ProductModel extends Product {
       'image_url': imageUrl,
       'volume': volume,
       'degre': degre,
+      'quantite': degre,
     };
   }
 
@@ -37,7 +39,8 @@ class ProductModel extends Product {
       categorieId: map['categorie'] != null ? map['categorie'] as String : null,
       imageUrl: map['image_url'] != null ? map['image_url'] as String : null,
       volume: (map['volume'] as num).toDouble(),
-      degre: (map['degre'] as num).toDouble(),
+      degre: map['degre'] != null ? (map['degre'] as num).toDouble() : null,
+      quantite: map['quantite'] as int,
     );
   }
 

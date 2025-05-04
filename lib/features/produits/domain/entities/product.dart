@@ -8,7 +8,8 @@ class Product extends Equatable {
   final String? categorieId;
   final String? imageUrl;
   final double volume;
-  final double degre;
+  final double? degre;
+  final int quantite;
 
   const Product({
     required this.id,
@@ -19,6 +20,7 @@ class Product extends Equatable {
     required this.imageUrl,
     required this.volume,
     required this.degre,
+    required this.quantite,
   });
 
   @override
@@ -31,5 +33,6 @@ class Product extends Equatable {
     imageUrl,
     volume,
     degre,
+    quantite,
   ];
 }
