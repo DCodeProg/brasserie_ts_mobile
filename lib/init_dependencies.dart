@@ -7,6 +7,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/secrets/app_secrets.dart';
 import 'core/shared/cubit/theme_cubit.dart';
+import 'features/categories/data/datasources/categories_remote_datasource.dart';
+import 'features/categories/data/repositories/categories_repository_impl.dart';
+import 'features/categories/domain/repositories/categories_repository.dart';
+import 'features/categories/domain/usecases/fetch_all_categories.dart';
+import 'features/categories/presentation/bloc/categories_bloc.dart';
 
 GetIt getIt = GetIt.instance;
 
@@ -28,4 +33,22 @@ Future<void> initDependencies() async {
   );
 
   getIt.registerLazySingleton(() => ThemeCubit());
+
+  initCategories();
+}
+
+void initCategories() {
+  getIt
+    // Datasources
+    ..registerFactory<CategoriesRemoteDatasource>(
+      () => CategoriesRemoteDatasourceImpl(supabaseClient: getIt()),
+    )
+    // Repositories
+    ..registerFactory<CategoriesRepository>(
+      () => CategoriesRepositoryImpl(remoteDatasource: getIt()),
+    )
+    // Usecases
+    ..registerFactory(() => FetchAllCategories(categoriesRepository: getIt()))
+    // Bloc
+    ..registerLazySingleton(() => CategoriesBloc(fetchAllCategories: getIt()));
 }
