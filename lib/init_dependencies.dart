@@ -12,6 +12,11 @@ import 'features/categories/data/repositories/categories_repository_impl.dart';
 import 'features/categories/domain/repositories/categories_repository.dart';
 import 'features/categories/domain/usecases/fetch_all_categories.dart';
 import 'features/categories/presentation/bloc/categories_bloc.dart';
+import 'features/produits/data/datasources/products_remote_datasource.dart';
+import 'features/produits/data/repositories/products_repository_impl.dart';
+import 'features/produits/domain/repositories/products_repository.dart';
+import 'features/produits/domain/usecases/fetch_all_products.dart';
+import 'features/produits/presentation/bloc/products_bloc.dart';
 
 GetIt getIt = GetIt.instance;
 
@@ -34,10 +39,11 @@ Future<void> initDependencies() async {
 
   getIt.registerLazySingleton(() => ThemeCubit());
 
-  initCategories();
+  initCategoriesBloc();
+  initProductsBloc();
 }
 
-void initCategories() {
+void initCategoriesBloc() {
   getIt
     // Datasources
     ..registerFactory<CategoriesRemoteDatasource>(
@@ -51,4 +57,20 @@ void initCategories() {
     ..registerFactory(() => FetchAllCategories(categoriesRepository: getIt()))
     // Bloc
     ..registerLazySingleton(() => CategoriesBloc(fetchAllCategories: getIt()));
+}
+
+void initProductsBloc() {
+  getIt
+    // Datasources
+    ..registerFactory<ProductsRemoteDatasource>(
+      () => ProductsRemoteDatasourceImpl(supabaseClient: getIt()),
+    )
+    // Repositories
+    ..registerFactory<ProductsRepository>(
+      () => ProductsRepositoryImpl(remoteDatasource: getIt()),
+    )
+    // Usecases
+    ..registerFactory(() => FetchAllProducts(productsRepository: getIt()))
+    // Bloc
+    ..registerLazySingleton(() => ProductsBloc(fetchAllProducts: getIt()));
 }
