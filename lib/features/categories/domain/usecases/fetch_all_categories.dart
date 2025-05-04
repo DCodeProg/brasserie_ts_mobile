@@ -11,7 +11,7 @@ class FetchAllCategories implements UseCase<List<Category>, NoParams> {
   FetchAllCategories({required this.categoriesRepository});
 
   @override
-  Future<Either<Failure, List<Category>>> call(NoParams params) async {
+  Future<Either<Failure, List<Category>>> call([NoParams? params]) async {
     return await categoriesRepository.fetchAllCategories();
   }
 }

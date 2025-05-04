@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../../core/usecase/usecase.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/usecases/fetch_all_categories.dart';
 
@@ -25,7 +24,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
   ) async {
     emit(CategoriesLoadingState());
 
-    final res = await fetchAllCategories(NoParams());
+    final res = await fetchAllCategories();
 
     res.fold(
       (l) => emit(CategoriesFailureState(message: l.message)),
