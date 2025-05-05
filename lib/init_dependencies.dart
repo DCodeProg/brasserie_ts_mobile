@@ -7,6 +7,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/secrets/app_secrets.dart';
 import 'core/shared/cubit/theme_cubit.dart';
+import 'features/auth/data/datasources/auth_remote_datasource.dart';
+import 'features/auth/data/repositories/auth_repository_impl.dart';
+import 'features/auth/domain/repositories/auth_repository.dart';
+import 'features/auth/domain/usecases/get_current_user.dart';
+import 'features/auth/domain/usecases/sign_in_with_password.dart';
+import 'features/auth/domain/usecases/sign_out.dart';
+import 'features/auth/domain/usecases/sign_up.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/categories/data/datasources/categories_remote_datasource.dart';
 import 'features/categories/data/repositories/categories_repository_impl.dart';
 import 'features/categories/domain/repositories/categories_repository.dart';
@@ -39,8 +47,34 @@ Future<void> initDependencies() async {
 
   getIt.registerLazySingleton(() => ThemeCubit());
 
+  initAuth();
   initCategoriesBloc();
   initProductsBloc();
+}
+
+void initAuth() {
+  getIt
+    // Datasources
+    ..registerFactory<AuthRemoteDatasource>(
+      () => AuthRemoteDatasourceImplt(supabaseClient: getIt()),
+    )
+    // Repositories
+    ..registerFactory<AuthRepository>(
+      () => AuthRepositoryImpl(remoteDatasource: getIt()),
+    )
+    // Usecases
+    ..registerFactory(() => GetCurrentUser(authRepository: getIt()))
+    ..registerFactory(() => SignInWithPassword(authRepository: getIt()))
+    ..registerFactory(() => SignUp(authRepository: getIt()))
+    ..registerFactory(() => SignOut(authRepository: getIt()))
+    // Bloc
+    ..registerLazySingleton(
+      () => AuthBloc(
+        getCurrentUser: getIt(),
+        signInWithPassword: getIt(),
+        signOut: getIt(),
+      ),
+    );
 }
 
 void initCategoriesBloc() {

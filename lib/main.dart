@@ -7,6 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/text_theme.dart';
 import 'features/categories/presentation/bloc/categories_bloc.dart';
 import 'features/produits/presentation/bloc/products_bloc.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'init_dependencies.dart';
 
 Future<void> main() async {
@@ -18,6 +19,7 @@ Future<void> main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => getIt<ThemeCubit>()),
+        BlocProvider(create: (context) => getIt<AuthBloc>()),
         BlocProvider(create: (context) => getIt<CategoriesBloc>()),
         BlocProvider(create: (context) => getIt<ProductsBloc>()),
       ],
