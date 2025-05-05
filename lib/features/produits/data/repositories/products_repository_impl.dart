@@ -1,6 +1,6 @@
-import '../../../../core/errors/exceptions.dart';
 import 'package:fpdart/fpdart.dart';
 
+import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/products_repository.dart';
