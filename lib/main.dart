@@ -1,3 +1,4 @@
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -5,9 +6,9 @@ import 'core/router/app_router.dart';
 import 'core/shared/cubit/theme_cubit.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/text_theme.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/categories/presentation/bloc/categories_bloc.dart';
 import 'features/produits/presentation/bloc/products_bloc.dart';
-import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'init_dependencies.dart';
 
 Future<void> main() async {
@@ -28,8 +29,25 @@ Future<void> main() async {
   );
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    Aptabase.instance.trackEvent("app_started");
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    Aptabase.instance.trackEvent("app_closed");
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
