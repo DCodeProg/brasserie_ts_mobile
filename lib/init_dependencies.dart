@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/secrets/app_secrets.dart';
@@ -20,6 +21,15 @@ import 'features/categories/data/repositories/categories_repository_impl.dart';
 import 'features/categories/domain/repositories/categories_repository.dart';
 import 'features/categories/domain/usecases/fetch_all_categories.dart';
 import 'features/categories/presentation/bloc/categories_bloc.dart';
+import 'features/panier/data/datasources/panier_local_datasource.dart';
+import 'features/panier/data/repositories/panier_repository_impl.dart';
+import 'features/panier/domain/repositories/panier_repository.dart';
+import 'features/panier/domain/usecases/add_item.dart';
+import 'features/panier/domain/usecases/clear_items.dart';
+import 'features/panier/domain/usecases/load_panier.dart';
+import 'features/panier/domain/usecases/remove_item.dart';
+import 'features/panier/domain/usecases/update_item_quantity.dart';
+import 'features/panier/presentation/bloc/panier_bloc.dart';
 import 'features/produits/data/datasources/products_remote_datasource.dart';
 import 'features/produits/data/repositories/products_repository_impl.dart';
 import 'features/produits/domain/repositories/products_repository.dart';
@@ -47,9 +57,13 @@ Future<void> initDependencies() async {
 
   getIt.registerLazySingleton(() => ThemeCubit());
 
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton(() => sharedPreferences);
+
   initAuth();
   initCategoriesBloc();
   initProductsBloc();
+  initPanier();
 }
 
 void initAuth() {
@@ -107,4 +121,32 @@ void initProductsBloc() {
     ..registerFactory(() => FetchAllProducts(productsRepository: getIt()))
     // Bloc
     ..registerLazySingleton(() => ProductsBloc(fetchAllProducts: getIt()));
+}
+
+void initPanier() {
+  getIt
+    // Datasources
+    ..registerFactory<PanierLocalDatasource>(
+      () => PanierLocalDatasourceImpl(sharedPreferences: getIt()),
+    )
+    // Repositories
+    ..registerFactory<PanierRepository>(
+      () => PanierRepositoryImpl(localDatasource: getIt()),
+    )
+    // Usecases
+    ..registerFactory(() => AddItem(panierRepository: getIt()))
+    ..registerFactory(() => ClearItems(panierRepository: getIt()))
+    ..registerFactory(() => LoadPanier(panierRepository: getIt()))
+    ..registerFactory(() => RemoveItem(panierRepository: getIt()))
+    ..registerFactory(() => UpdateItemQuantity(panierRepository: getIt()))
+    // Bloc
+    ..registerLazySingleton(
+      () => PanierBloc(
+        addItem: getIt(),
+        clearItems: getIt(),
+        loadPanier: getIt(),
+        removeItem: getIt(),
+        updateItemQuantity: getIt(),
+      ),
+    );
 }

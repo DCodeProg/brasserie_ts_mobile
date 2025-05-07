@@ -14,7 +14,9 @@ class ProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Nos produits")),
+      appBar: AppBar(
+        title: Text("Produits", style: TextTheme.of(context).displaySmall),
+      ),
       body: BlocBuilder<ProductsBloc, ProductsState>(
         builder: (context, state) {
           switch (state) {
@@ -52,13 +54,17 @@ class _ProductListWidget extends StatelessWidget {
             CategoriesFetchAllCategoriesEvent(),
           );
         },
-        child: ListView.separated(
-          itemCount: products.length,
-          itemBuilder: (context, index) {
-            final Product product = products[index];
-            return ProductListItem(product: product);
-          },
-          separatorBuilder: (context, index) => Divider(height: 0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: ListView.builder(
+            padding: EdgeInsets.symmetric(vertical: 16  ),
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              final Product product = products[index];
+              return ProductListItem(product: product);
+            },
+            // separatorBuilder: (context, index) => Divider(height: 0),
+          ),
         ),
       );
     } else {

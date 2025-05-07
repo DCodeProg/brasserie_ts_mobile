@@ -12,7 +12,9 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Votre compte")),
+      appBar: AppBar(
+        title: Text("Compte", style: TextTheme.of(context).displaySmall),
+      ),
       body: SafeArea(
         child: Center(
           child: BlocBuilder<AuthBloc, AuthState>(
@@ -83,9 +85,7 @@ class _SignOutTile extends StatelessWidget {
       trailing: Icon(Icons.chevron_right),
       onTap: () {
         HapticFeedback.selectionClick();
-        context.read<AuthBloc>().add(
-          AuthSignOutEvent(),
-        );
+        context.read<AuthBloc>().add(AuthSignOutEvent());
       },
     );
   }
@@ -101,10 +101,8 @@ class _AppThemeTile extends StatelessWidget {
       leading: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, state) {
           return Icon(switch (state) {
-            ThemeMode.system =>
-              Icons.brightness_auto_outlined,
-            ThemeMode.light =>
-              Icons.light_mode_outlined,
+            ThemeMode.system => Icons.brightness_auto_outlined,
+            ThemeMode.light => Icons.light_mode_outlined,
             ThemeMode.dark => Icons.dark_mode_outlined,
           });
         },
@@ -116,37 +114,22 @@ class _AppThemeTile extends StatelessWidget {
           builder: (context) {
             return SimpleDialog(
               clipBehavior: Clip.antiAliasWithSaveLayer,
-              title: Text(
-                "Choisissez le thème de l'application",
-              ),
+              title: Text("Choisissez le thème de l'application"),
               children: [
                 SimpleDialogOption(
                   child: Row(
                     spacing: 8,
                     children: [
-                      Icon(
-                        Icons.brightness_auto_outlined,
-                      ),
+                      Icon(Icons.brightness_auto_outlined),
                       Text("Thème système"),
                     ],
                   ),
                   onPressed: () {
                     HapticFeedback.selectionClick();
-                    context
-                        .read<ThemeCubit>()
-                        .selectThemeMode(
-                          ThemeMode.system,
-                        );
-                    context.pop();
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "L'application est passée en thème système",
-                        ),
-                      ),
+                    context.read<ThemeCubit>().selectThemeMode(
+                      ThemeMode.system,
                     );
+                    context.pop();
                   },
                 ),
                 SimpleDialogOption(
@@ -159,21 +142,8 @@ class _AppThemeTile extends StatelessWidget {
                   ),
                   onPressed: () {
                     HapticFeedback.selectionClick();
-                    context
-                        .read<ThemeCubit>()
-                        .selectThemeMode(
-                          ThemeMode.light,
-                        );
+                    context.read<ThemeCubit>().selectThemeMode(ThemeMode.light);
                     context.pop();
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "L'application est passée en thème clair",
-                        ),
-                      ),
-                    );
                   },
                 ),
                 SimpleDialogOption(
@@ -186,21 +156,8 @@ class _AppThemeTile extends StatelessWidget {
                   ),
                   onPressed: () {
                     HapticFeedback.selectionClick();
-                    context
-                        .read<ThemeCubit>()
-                        .selectThemeMode(
-                          ThemeMode.dark,
-                        );
+                    context.read<ThemeCubit>().selectThemeMode(ThemeMode.dark);
                     context.pop();
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "L'application est passée en thème sombre",
-                        ),
-                      ),
-                    );
                   },
                 ),
               ],

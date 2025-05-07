@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../categories/domain/entities/category.dart';
 import '../../../categories/presentation/bloc/categories_bloc.dart';
+import '../../../panier/presentation/bloc/panier_bloc.dart';
 import '../../domain/entities/product.dart';
 
 class ProductListItem extends StatelessWidget {
@@ -20,13 +21,52 @@ class ProductListItem extends StatelessWidget {
       context.push("/produits/${product.id}");
     }
 
-    return ListTile(
-      minVerticalPadding: 16,
-      leading: _ProductImage(product: product),
-      title: Text(product.nom),
-      subtitle: _ProductDetails(product: product),
-      trailing: Icon(Icons.chevron_right),
-      onTap: openProductDetailPage,
+    return Card.outlined(
+      color: ColorScheme.of(context).surfaceContainer,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      child: InkWell(
+        onTap: openProductDetailPage,
+        child: Column(
+          children: [
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 110,
+                    color: ColorScheme.of(context).surfaceContainerHigh,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [_ProductImage(product: product)],
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 16,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.nom,
+                            style: TextTheme.of(context).titleMedium,
+                          ),
+                          _ProductDetails(product: product),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -39,11 +79,10 @@ class _ProductImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 75,
       child:
           product.imageUrl != null
               ? CachedNetworkImage(
-                fit: BoxFit.contain,
+                fit: BoxFit.cover,
                 imageUrl: product.imageUrl!,
                 progressIndicatorBuilder:
                     (context, url, progress) => Center(
@@ -64,6 +103,18 @@ class _ProductDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void addToCart() {
+      context.read<PanierBloc>().add(
+        PanierAddItemEvent(itemId: product.id, quantite: 1),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("${product.nom} ajouté au panier"),
+          duration: Durations.extralong1,
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -77,9 +128,25 @@ class _ProductDetails extends StatelessWidget {
         ),
         SizedBox(height: 4),
         _ProductDescription(product: product),
-        SizedBox(height: 6),
-        _ProductPrice(product: product),
-        _StockIndicator(product: product),
+        SizedBox(height: 8),
+        Row(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ProductPrice(product: product),
+                _StockIndicator(product: product),
+              ],
+            ),
+            Spacer(),
+            IconButton.filled(
+              iconSize: 20,
+              visualDensity: VisualDensity(horizontal: -2, vertical: -2),
+              onPressed: product.quantite > 0 ? addToCart : null,
+              icon: Icon(Icons.add_shopping_cart),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -199,7 +266,7 @@ class _ProductPrice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("${product.prix}€", style: TextTheme.of(context).titleMedium);
+    return Text("${product.prix.toStringAsFixed(2)}€", style: TextTheme.of(context).titleMedium);
   }
 }
 
