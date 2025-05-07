@@ -1,3 +1,4 @@
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
@@ -30,6 +31,11 @@ GetIt getIt = GetIt.instance;
 
 Future<void> initDependencies() async {
   await dotenv.load(fileName: '.env');
+
+  await Aptabase.init(
+    dotenv.env['APTABASE_APP_KEY']!,
+    InitOptions(host: "https://aptabase-bts.host-dcode.fr"),
+  );
 
   final supabase = await Supabase.initialize(
     url: AppSecrets.supabaseUrl,
