@@ -1,9 +1,9 @@
-import 'package:brasserie_ts_mobile/features/produits/presentation/bloc/products_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../produits/presentation/bloc/products_bloc.dart';
 import '../bloc/panier_bloc.dart';
 
 class PanierPage extends StatelessWidget {

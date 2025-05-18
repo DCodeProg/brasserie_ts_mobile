@@ -3,7 +3,6 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecase/usecase.dart';
 import '../entities/panier.dart';
-import '../entities/panier_item.dart';
 import '../repositories/panier_repository.dart';
 
 class AddItem implements UseCase<Panier, AddItemParams> {
