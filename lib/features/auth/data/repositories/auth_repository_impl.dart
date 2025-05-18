@@ -70,7 +70,6 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
     required String nom,
     required String prenom,
-    required DateTime dateNaissance,
   }) async {
     try {
       final user = await remoteDatasource.signUp(
@@ -78,7 +77,6 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
         nom: nom,
         prenom: prenom,
-        dateNaissance: dateNaissance,
       );
       return right(user);
     } on ServerException catch (e) {
@@ -92,7 +90,6 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> updateAccountData({
     required String? nom,
     required String? prenom,
-    required DateTime? dateNaissance,
   }) {
     // TODO: implement updateAccountData
     throw UnimplementedError();

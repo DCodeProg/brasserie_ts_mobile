@@ -26,7 +26,6 @@ void main() {
     email: tEmail,
     nom: "Doe",
     prenom: "John",
-    dateNaissance: DateTime(2000, 01, 01),
     createdAt: DateTime(2025, 03, 04, 14, 53, 12),
   );
 
