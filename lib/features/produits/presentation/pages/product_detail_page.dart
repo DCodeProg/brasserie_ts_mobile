@@ -263,33 +263,63 @@ class _AddToCartWidget extends StatelessWidget {
                 ],
               ),
               Spacer(),
-              Card.outlined(
-                color: ColorScheme.of(context).surfaceContainerHighest,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(onPressed: () {}, icon: Icon(Icons.remove)),
-                    Text("1", style: TextTheme.of(context).titleMedium),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.add)),
-                  ],
-                ),
-              ),
+              // Card.outlined(
+              //   color: ColorScheme.of(context).surfaceContainerHighest,
+              //   child: Row(
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: [
+              //       IconButton(onPressed: () {}, icon: Icon(Icons.remove)),
+              //       Text("1", style: TextTheme.of(context).titleMedium),
+              //       IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
           SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: () {
-                context.read<PanierBloc>().add(
-                  PanierAddItemEvent(itemId: product.id, quantite: 1),
-                );
-              },
-              icon: Icon(Icons.add_shopping_cart),
-              label: Text("Ajouter au panier"),
-            ),
-          ),
+          AddToCartButton(product: product),
         ],
+      ),
+    );
+  }
+}
+
+class AddToCartButton extends StatefulWidget {
+  const AddToCartButton({super.key, required this.product});
+
+  final Product product;
+
+  @override
+  State<AddToCartButton> createState() => _AddToCartButtonState();
+}
+
+class _AddToCartButtonState extends State<AddToCartButton> {
+  bool _animation = false;
+  Future<void> _addToCart() async {
+    if (!_animation) {
+      context.read<PanierBloc>().add(
+        PanierAddItemEvent(itemId: widget.product.id, quantite: 1),
+      );
+      setState(() {
+        _animation = true;
+      });
+      await Future.delayed(Duration(seconds: 1));
+      setState(() {
+        _animation = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: _addToCart,
+        icon: Icon(
+          _animation ? Icons.shopping_cart_checkout : Icons.add_shopping_cart,
+        ),
+        label: Text(_animation ? "Ajouté !" : "Ajouter au panier"),
       ),
     );
   }
