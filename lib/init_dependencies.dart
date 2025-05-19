@@ -87,6 +87,7 @@ void initAuth() {
         getCurrentUser: getIt(),
         signInWithPassword: getIt(),
         signOut: getIt(),
+        signUp: getIt(),
       ),
     );
 }

@@ -22,7 +22,6 @@ void main() {
   final String tPassword = "J0hnD03!*21";
   final String tNom = "Doe";
   final String tPrenom = "John";
-  final DateTime tDateNaissance = DateTime(2000, 01, 01);
   final DateTime tCreatedAt = DateTime.now();
 
   final tUser = User(
@@ -30,7 +29,6 @@ void main() {
     email: tEmail,
     nom: tNom,
     prenom: tPrenom,
-    dateNaissance: tDateNaissance,
     createdAt: tCreatedAt,
   );
 
@@ -42,7 +40,6 @@ void main() {
         password: tPassword,
         nom: tNom,
         prenom: tPrenom,
-        dateNaissance: tDateNaissance,
       ),
     ).thenAnswer((_) async => right(tUser));
 
@@ -53,7 +50,6 @@ void main() {
         password: tPassword,
         nom: tNom,
         prenom: tPrenom,
-        dateNaissance: tDateNaissance,
       ),
     );
 
@@ -65,7 +61,6 @@ void main() {
         password: tPassword,
         nom: tNom,
         prenom: tPrenom,
-        dateNaissance: tDateNaissance,
       ),
     ).called(1);
     verifyNoMoreInteractions(mockAuthRepository);
@@ -82,7 +77,6 @@ void main() {
           password: tPassword,
           nom: tNom,
           prenom: tPrenom,
-          dateNaissance: tDateNaissance,
         ),
       ).thenAnswer((_) async => left(tFailure));
 
@@ -93,7 +87,6 @@ void main() {
           password: tPassword,
           nom: tNom,
           prenom: tPrenom,
-          dateNaissance: tDateNaissance,
         ),
       );
 
@@ -105,7 +98,6 @@ void main() {
           password: tPassword,
           nom: tNom,
           prenom: tPrenom,
-          dateNaissance: tDateNaissance,
         ),
       ).called(1);
       verifyNoMoreInteractions(mockAuthRepository);

@@ -25,7 +25,6 @@ void main() {
   final String tPassword = "J0hnD03!*21";
   final String tNom = "Doe";
   final String tPrenom = "John";
-  final DateTime tDateNaissance = DateTime(2000, 01, 01);
   final DateTime tCreatedAt = DateTime.now();
 
   final tUser = UserModel(
@@ -33,7 +32,6 @@ void main() {
     email: tEmail,
     nom: tNom,
     prenom: tPrenom,
-    dateNaissance: tDateNaissance,
     createdAt: tCreatedAt,
   );
 
@@ -104,7 +102,6 @@ void main() {
           password: tPassword,
           nom: tNom,
           prenom: tPrenom,
-          dateNaissance: tDateNaissance,
         ),
       ).thenAnswer((_) async => tUser);
 
@@ -114,7 +111,6 @@ void main() {
         password: tPassword,
         nom: tNom,
         prenom: tPrenom,
-        dateNaissance: tDateNaissance,
       );
 
       // assert
@@ -125,7 +121,6 @@ void main() {
           password: tPassword,
           nom: tNom,
           prenom: tPrenom,
-          dateNaissance: tDateNaissance,
         ),
       ).called(1);
       verifyNoMoreInteractions(mockAuthRemoteDatasource);
@@ -140,7 +135,6 @@ void main() {
           password: tPassword,
           nom: tNom,
           prenom: tPrenom,
-          dateNaissance: tDateNaissance,
         ),
       ).thenThrow(tServerException);
 
@@ -150,7 +144,6 @@ void main() {
         password: tPassword,
         nom: tNom,
         prenom: tPrenom,
-        dateNaissance: tDateNaissance,
       );
 
       // assert
@@ -164,7 +157,6 @@ void main() {
           password: tPassword,
           nom: tNom,
           prenom: tPrenom,
-          dateNaissance: tDateNaissance,
         ),
       ).called(1);
       verifyNoMoreInteractions(mockAuthRemoteDatasource);

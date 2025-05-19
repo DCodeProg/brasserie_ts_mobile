@@ -15,7 +15,6 @@ class UpdateAccountData implements UseCase<User, UpdateAccountDataParams> {
     return await authRepository.updateAccountData(
       nom: params.nom,
       prenom: params.prenom,
-      dateNaissance: params.dateNaissance,
     );
   }
 }
@@ -23,11 +22,9 @@ class UpdateAccountData implements UseCase<User, UpdateAccountDataParams> {
 class UpdateAccountDataParams {
   final String? nom;
   final String? prenom;
-  final DateTime? dateNaissance;
 
   UpdateAccountDataParams({
     required this.nom,
     required this.prenom,
-    required this.dateNaissance,
   });
 }

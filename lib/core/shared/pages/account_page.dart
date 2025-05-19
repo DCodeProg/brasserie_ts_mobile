@@ -16,40 +16,61 @@ class AccountPage extends StatelessWidget {
         title: Text("Compte", style: TextTheme.of(context).displaySmall),
       ),
       body: SafeArea(
-        child: Center(
-          child: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if (state is AuthSuccessState) {
-                return Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 50.0),
-                      child: _AvatarWidget(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Card(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: Column(
-                          children: [
-                            _MyInfosTile(),
-                            Divider(height: 0),
-                            _AppThemeTile(),
-                            Divider(height: 0),
-                            _SignOutTile(),
-                          ],
+        child: Expanded(
+          child: SingleChildScrollView(
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthSuccessState) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 50.0),
+                        child: _AvatarWidget(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Card(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: Column(
+                            children: [
+                              _MyInfosTile(),
+                              Divider(height: 0),
+                              _AppThemeTile(),
+                              Divider(height: 0),
+                              _SignOutTile(),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                return ElevatedButton(
-                  onPressed: () => context.pushNamed("connexion"),
-                  child: Text("Connexion"),
-                );
-              }
-            },
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 50.0),
+                        child: _AvatarWidget(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Card(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: Column(
+                            children: [
+                              // _MyInfosTile(),
+                              // Divider(height: 0),
+                              _SignInTile(),
+                              Divider(height: 0),
+                              _AppThemeTile(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -86,6 +107,23 @@ class _SignOutTile extends StatelessWidget {
       onTap: () {
         HapticFeedback.selectionClick();
         context.read<AuthBloc>().add(AuthSignOutEvent());
+      },
+    );
+  }
+}
+
+class _SignInTile extends StatelessWidget {
+  const _SignInTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text("Se connecter"),
+      leading: Icon(Icons.login),
+      trailing: Icon(Icons.chevron_right),
+      onTap: () {
+        HapticFeedback.selectionClick();
+        context.pushNamed("connexion");
       },
     );
   }
@@ -195,7 +233,7 @@ class _AvatarWidget extends StatelessWidget {
                       style: TextTheme.of(context).displayLarge,
                     );
                   } else {
-                    return Placeholder();
+                    return Icon(Icons.person_outline, size: 100);
                   }
                 },
               ),

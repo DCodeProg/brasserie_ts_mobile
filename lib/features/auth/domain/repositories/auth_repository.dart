@@ -16,12 +16,10 @@ abstract interface class AuthRepository {
     required String password,
     required String nom,
     required String prenom,
-    required DateTime dateNaissance,
   });
   Future<Either<Failure, User>> updateAccountData({
     required String? nom,
     required String? prenom,
-    required DateTime? dateNaissance,
   });
   Future<Either<Failure, User>> updateEmail({required String email});
 }

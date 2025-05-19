@@ -23,3 +23,20 @@ final class AuthSignInWithPasswordEvent extends AuthEvent {
 }
 
 final class AuthSignOutEvent extends AuthEvent {}
+
+final class AuthSignUpEvent extends AuthEvent {
+  final String nom;
+  final String prenom;
+  final String email;
+  final String password;
+
+  const AuthSignUpEvent({
+    required this.nom,
+    required this.prenom,
+    required this.email,
+    required this.password,
+  });
+
+  @override
+  List<Object> get props => [nom, prenom, email, password];
+}

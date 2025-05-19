@@ -14,7 +14,6 @@ abstract interface class AuthRemoteDatasource {
     required String password,
     required String nom,
     required String prenom,
-    required DateTime dateNaissance,
   });
   Future<void> signOut();
   Future<void> deleteAccount();
@@ -42,7 +41,6 @@ class AuthRemoteDatasourceImplt implements AuthRemoteDatasource {
           'email': currentSession.user.email,
           'nom': userData['nom'],
           'prenom': userData['prenom'],
-          'dateNaissance': userData['date_naissance'],
           'createdAt': currentSession.user.createdAt,
         });
       }
@@ -77,7 +75,6 @@ class AuthRemoteDatasourceImplt implements AuthRemoteDatasource {
         'email': res.user!.email,
         'nom': userData['nom'],
         'prenom': userData['prenom'],
-        'dateNaissance': userData['date_naissance'],
         'createdAt': res.user!.createdAt,
       });
     } on AuthException catch (e) {
@@ -93,10 +90,33 @@ class AuthRemoteDatasourceImplt implements AuthRemoteDatasource {
     required String password,
     required String nom,
     required String prenom,
-    required DateTime dateNaissance,
-  }) {
-    // TODO: implement signUp
-    throw UnimplementedError();
+  }) async {
+    try {
+      final res = await supabaseClient.auth.signUp(
+        email: email,
+        password: password,
+        data: {'nom': nom, 'prenom': prenom},
+      );
+      if (res.user == null) {
+        throw ServerException(message: "User is null!");
+      }
+      final userData =
+          await supabaseClient
+              .from('utilisateurs')
+              .select()
+              .eq('uid', res.user!.id)
+              .single();
+
+      return UserModel.fromMap({
+        'uid': res.user!.id,
+        'email': res.user!.email,
+        'nom': userData['nom'],
+        'prenom': userData['prenom'],
+        'createdAt': res.user!.createdAt,
+      });
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
   }
 
   @override

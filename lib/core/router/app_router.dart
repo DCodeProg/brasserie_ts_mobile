@@ -1,3 +1,4 @@
+import 'package:brasserie_ts_mobile/features/auth/presentation/pages/register_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
@@ -65,15 +66,14 @@ final appRouter = GoRouter(
       ],
     ),
     GoRoute(
-      path: "/auth",
-      redirect: (context, state) => "/auth/connexion",
-      routes: <GoRoute>[
-        GoRoute(
-          path: "/connexion",
-          name: "connexion",
-          builder: (context, state) => LoginPage(),
-        ),
-      ],
+      path: "/connexion",
+      name: "connexion",
+      builder: (context, state) => LoginPage(),
+    ),
+    GoRoute(
+      path: "/inscription",
+      name: "inscription",
+      builder: (context, state) => RegisterPage(),
     ),
   ],
 );

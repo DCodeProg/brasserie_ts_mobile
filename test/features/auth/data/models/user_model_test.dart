@@ -9,7 +9,6 @@ void main() {
   final String tEmail = "john.doe@host-dcode.fr";
   final String tNom = "Doe";
   final String tPrenom = "John";
-  final DateTime tDateNaissance = DateTime(2000, 01, 01);
   final DateTime tCreatedAt = DateTime.parse("2025-04-26T17:53:19.857");
 
   final tUserModel = UserModel(
@@ -17,7 +16,6 @@ void main() {
     email: tEmail,
     nom: tNom,
     prenom: tPrenom,
-    dateNaissance: tDateNaissance,
     createdAt: tCreatedAt,
   );
 
@@ -26,7 +24,6 @@ void main() {
     'email': tEmail,
     'nom': tNom,
     'prenom': tPrenom,
-    'dateNaissance': "2000-01-01",
     'createdAt': "2025-04-26T17:53:19.857",
   };
 
@@ -61,10 +58,6 @@ void main() {
       expect(
         userModel.createdAt,
         equals(tCreatedAt),
-      );
-      expect(
-        userModel.dateNaissance.millisecondsSinceEpoch,
-        equals(tDateNaissance.millisecondsSinceEpoch),
       );
     });
   });
@@ -110,7 +103,6 @@ void main() {
       expect(tUserFromJson.email, tEmail);
       expect(tUserFromJson.nom, tNom);
       expect(tUserFromJson.prenom, tPrenom);
-      expect(tUserFromJson.dateNaissance, tDateNaissance);
       expect(tUserFromJson.createdAt, tCreatedAt);
     });
   });
@@ -119,12 +111,10 @@ void main() {
     test("should return a UserModel when copied with some change", () {
       // arrange
       final String tEditedNom = "Johny";
-      final tEditedDateNaissance = DateTime(2000, 02, 05);
 
       // act
       final tCopiedUser = tUserModel.copyWith(
         nom: tEditedNom,
-        dateNaissance: tEditedDateNaissance,
       );
 
       // assert
@@ -134,12 +124,10 @@ void main() {
     test("should have correct data when copied with some change", () {
       // arrange
       final String tEditedNom = "Johny";
-      final tEditedDateNaissance = DateTime(2000, 02, 05);
 
       // act
       final tCopiedUser = tUserModel.copyWith(
         nom: tEditedNom,
-        dateNaissance: tEditedDateNaissance,
       );
 
       // assert
@@ -147,7 +135,6 @@ void main() {
       expect(tCopiedUser.email, tEmail);
       expect(tCopiedUser.nom, tEditedNom);
       expect(tCopiedUser.prenom, tPrenom);
-      expect(tCopiedUser.dateNaissance, tEditedDateNaissance);
       expect(tCopiedUser.createdAt, tCreatedAt);
     });
   });
