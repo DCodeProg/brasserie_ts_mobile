@@ -35,16 +35,77 @@ class PanierPage extends StatelessWidget {
                         child: Column(
                           children: [
                             Expanded(
-                              child: ListView.builder(
-                                itemCount: state.panier.panierItems.length,
-                                itemBuilder: (context, index) {
-                                  final produit =
-                                      state.panier.panierItems[index];
-                                  return ListTile(
-                                    title: Text(produit.id),
-                                    subtitle: Text(produit.quantite.toString()),
-                                  );
-                                },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                ),
+                                child: ListView.builder(
+                                  itemCount: state.panier.panierItems.length,
+                                  itemBuilder: (context, index) {
+                                    final produit =
+                                        productState.products
+                                            .where(
+                                              (product) =>
+                                                  product.id ==
+                                                  state
+                                                      .panier
+                                                      .panierItems[index]
+                                                      .id,
+                                            )
+                                            .single;
+                                    return Card(
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      child: Dismissible(
+                                        onDismissed: (direction) {
+                                          context.read<PanierBloc>().add(
+                                            PanierRemoveItemEvent(
+                                              itemId: produit.id,
+                                            ),
+                                          );
+                                        },
+                                        background: Container(
+                                          color:
+                                              ColorScheme.of(
+                                                context,
+                                              ).errorContainer,
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left: 16.0),
+                                              child: Icon(
+                                                Icons
+                                                    .remove_shopping_cart_outlined,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        secondaryBackground: Container(
+                                          color:
+                                              ColorScheme.of(
+                                                context,
+                                              ).errorContainer,
+                                          child: Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(right: 16.0),
+                                              child: Icon(
+                                                Icons
+                                                    .remove_shopping_cart_outlined,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        key: GlobalKey(),
+                                        child: ListTile(
+                                          title: Text(produit.nom),
+                                          subtitle: Text(
+                                            "Quantité : ${state.panier.panierItems[index].quantite}",
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                             FilledButton.icon(

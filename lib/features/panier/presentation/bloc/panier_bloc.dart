@@ -77,7 +77,19 @@ class PanierBloc extends Bloc<PanierEvent, PanierState> {
     );
   }
 
-  void _onRemoveItemEvent(PanierRemoveItemEvent event, Emitter emit) {}
+  Future<void> _onRemoveItemEvent(
+    PanierRemoveItemEvent event,
+    Emitter emit,
+  ) async {
+    emit(PanierLoadingState());
+
+    final res = await removeItem(RemoveItemParams(itemId: event.itemId));
+
+    res.fold(
+      (l) => emit(PanierFailureState(message: l.message)),
+      (r) => _emitPanier(r, emit),
+    );
+  }
 
   void _onUpdateItemQuantityEvent(
     PanierUpdateItemQuantityEvent event,
