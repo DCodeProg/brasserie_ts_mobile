@@ -14,40 +14,61 @@ class AccountPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Votre compte")),
       body: SafeArea(
-        child: Center(
-          child: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              if (state is AuthSuccessState) {
-                return Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 50.0),
-                      child: _AvatarWidget(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Card(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: Column(
-                          children: [
-                            _MyInfosTile(),
-                            Divider(height: 0),
-                            _AppThemeTile(),
-                            Divider(height: 0),
-                            _SignOutTile(),
-                          ],
+        child: Expanded(
+          child: SingleChildScrollView(
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthSuccessState) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 50.0),
+                        child: _AvatarWidget(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Card(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: Column(
+                            children: [
+                              _MyInfosTile(),
+                              Divider(height: 0),
+                              _AppThemeTile(),
+                              Divider(height: 0),
+                              _SignOutTile(),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              } else {
-                return ElevatedButton(
-                  onPressed: () => context.pushNamed("connexion"),
-                  child: Text("Connexion"),
-                );
-              }
-            },
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 50.0),
+                        child: _AvatarWidget(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Card(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: Column(
+                            children: [
+                              // _MyInfosTile(),
+                              // Divider(height: 0),
+                              _SignInTile(),
+                              Divider(height: 0),
+                              _AppThemeTile(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -83,9 +104,24 @@ class _SignOutTile extends StatelessWidget {
       trailing: Icon(Icons.chevron_right),
       onTap: () {
         HapticFeedback.selectionClick();
-        context.read<AuthBloc>().add(
-          AuthSignOutEvent(),
-        );
+        context.read<AuthBloc>().add(AuthSignOutEvent());
+      },
+    );
+  }
+}
+
+class _SignInTile extends StatelessWidget {
+  const _SignInTile();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text("Se connecter"),
+      leading: Icon(Icons.login),
+      trailing: Icon(Icons.chevron_right),
+      onTap: () {
+        HapticFeedback.selectionClick();
+        context.pushNamed("connexion");
       },
     );
   }
@@ -101,10 +137,8 @@ class _AppThemeTile extends StatelessWidget {
       leading: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, state) {
           return Icon(switch (state) {
-            ThemeMode.system =>
-              Icons.brightness_auto_outlined,
-            ThemeMode.light =>
-              Icons.light_mode_outlined,
+            ThemeMode.system => Icons.brightness_auto_outlined,
+            ThemeMode.light => Icons.light_mode_outlined,
             ThemeMode.dark => Icons.dark_mode_outlined,
           });
         },
@@ -116,31 +150,23 @@ class _AppThemeTile extends StatelessWidget {
           builder: (context) {
             return SimpleDialog(
               clipBehavior: Clip.antiAliasWithSaveLayer,
-              title: Text(
-                "Choisissez le thème de l'application",
-              ),
+              title: Text("Choisissez le thème de l'application"),
               children: [
                 SimpleDialogOption(
                   child: Row(
                     spacing: 8,
                     children: [
-                      Icon(
-                        Icons.brightness_auto_outlined,
-                      ),
+                      Icon(Icons.brightness_auto_outlined),
                       Text("Thème système"),
                     ],
                   ),
                   onPressed: () {
                     HapticFeedback.selectionClick();
-                    context
-                        .read<ThemeCubit>()
-                        .selectThemeMode(
-                          ThemeMode.system,
-                        );
+                    context.read<ThemeCubit>().selectThemeMode(
+                      ThemeMode.system,
+                    );
                     context.pop();
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           "L'application est passée en thème système",
@@ -159,15 +185,9 @@ class _AppThemeTile extends StatelessWidget {
                   ),
                   onPressed: () {
                     HapticFeedback.selectionClick();
-                    context
-                        .read<ThemeCubit>()
-                        .selectThemeMode(
-                          ThemeMode.light,
-                        );
+                    context.read<ThemeCubit>().selectThemeMode(ThemeMode.light);
                     context.pop();
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           "L'application est passée en thème clair",
@@ -186,15 +206,9 @@ class _AppThemeTile extends StatelessWidget {
                   ),
                   onPressed: () {
                     HapticFeedback.selectionClick();
-                    context
-                        .read<ThemeCubit>()
-                        .selectThemeMode(
-                          ThemeMode.dark,
-                        );
+                    context.read<ThemeCubit>().selectThemeMode(ThemeMode.dark);
                     context.pop();
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           "L'application est passée en thème sombre",
@@ -238,7 +252,7 @@ class _AvatarWidget extends StatelessWidget {
                       style: TextTheme.of(context).displayLarge,
                     );
                   } else {
-                    return Placeholder();
+                    return Icon(Icons.person_outline, size: 100);
                   }
                 },
               ),
