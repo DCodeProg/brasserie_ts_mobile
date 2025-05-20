@@ -5,7 +5,6 @@ class User extends Equatable {
   final String email;
   final String nom;
   final String prenom;
-  final DateTime dateNaissance;
   final DateTime createdAt;
 
   const User({
@@ -13,7 +12,6 @@ class User extends Equatable {
     required this.email,
     required this.nom,
     required this.prenom,
-    required this.dateNaissance,
     required this.createdAt,
   });
 
@@ -23,7 +21,6 @@ class User extends Equatable {
     email,
     nom,
     prenom,
-    dateNaissance,
     createdAt,
   ];
 }

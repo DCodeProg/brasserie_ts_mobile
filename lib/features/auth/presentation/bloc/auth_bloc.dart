@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import '../../domain/usecases/sign_up.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/usecase/usecase.dart';
@@ -11,36 +12,36 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final GetCurrentUser _getCurrentUser;
-  final SignInWithPassword _signInWithPassword;
-  final SignOut _signOut;
+  final GetCurrentUser getCurrentUser;
+  final SignInWithPassword signInWithPassword;
+  final SignOut signOut;
+  final SignUp signUp;
 
   AuthBloc({
-    required GetCurrentUser getCurrentUser,
-    required SignInWithPassword signInWithPassword,
-    required SignOut signOut,
-  }) : _getCurrentUser = getCurrentUser,
-       _signInWithPassword = signInWithPassword,
-       _signOut = signOut,
-       super(AuthInitialState()) {
+    required this.getCurrentUser,
+    required this.signInWithPassword,
+    required this.signOut,
+    required this.signUp,
+  }) : super(AuthInitialState()) {
     on<AuthIsUserLoggedInEvent>(
-      (event, emit) => _onAuthIsUserLoggedInEvent(event, emit),
+      (event, emit) => _onIsUserLoggedInEvent(event, emit),
     );
     on<AuthSignInWithPasswordEvent>(
-      (event, emit) => _onAuthLoginWithPasswordEvent(event, emit),
+      (event, emit) => _onLoginWithPasswordEvent(event, emit),
     );
-    on<AuthSignOutEvent>((event, emit) => _onAuthSignOutEvent(event, emit));
+    on<AuthSignOutEvent>((event, emit) => _onSignOutEvent(event, emit));
+    on<AuthSignUpEvent>((event, emit) => _onSignUpEvent(event, emit));
 
     add(AuthIsUserLoggedInEvent());
   }
 
-  Future<void> _onAuthIsUserLoggedInEvent(
+  Future<void> _onIsUserLoggedInEvent(
     AuthIsUserLoggedInEvent event,
     Emitter emit,
   ) async {
     emit(AuthLoadingState());
 
-    final res = await _getCurrentUser();
+    final res = await getCurrentUser();
 
     res.fold(
       (l) => emit(AuthLoggedOutState()),
@@ -48,13 +49,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onAuthLoginWithPasswordEvent(
+  Future<void> _onLoginWithPasswordEvent(
     AuthSignInWithPasswordEvent event,
     Emitter emit,
   ) async {
     emit(AuthLoadingState());
 
-    final res = await _signInWithPassword(
+    final res = await signInWithPassword(
       SignInWithPasswordParams(email: event.email, password: event.password),
     );
 
@@ -64,14 +65,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onAuthSignOutEvent(AuthSignOutEvent event, Emitter emit) async {
+  Future<void> _onSignOutEvent(AuthSignOutEvent event, Emitter emit) async {
     emit(AuthLoadingState());
 
-    final res = await _signOut(NoParams());
+    final res = await signOut(NoParams());
 
     res.fold(
       (l) => emit(AuthFailureState(message: l.message)),
       (r) => emit(AuthLoggedOutState()),
+    );
+  }
+
+  Future<void> _onSignUpEvent(
+    AuthSignUpEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoadingState());
+
+    final res = await signUp(
+      SignUpParams(
+        email: event.email,
+        password: event.password,
+        nom: event.nom,
+        prenom: event.prenom,
+      ),
+    );
+
+    res.fold(
+      (l) => emit(AuthFailureState(message: l.message)),
+      (r) => emit(AuthSuccessState(user: r)),
     );
   }
 }

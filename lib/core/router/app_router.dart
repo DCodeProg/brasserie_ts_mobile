@@ -1,7 +1,9 @@
+import 'package:brasserie_ts_mobile/features/auth/presentation/pages/register_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/my_informations_page.dart';
+import '../../features/panier/presentation/pages/panier_page.dart';
 import '../../features/produits/presentation/pages/product_detail_page.dart';
 import '../../features/produits/presentation/pages/products_page.dart';
 import '../shared/layouts/main_layout.dart';
@@ -36,6 +38,15 @@ final appRouter = GoRouter(
           ],
         ),
         StatefulShellBranch(
+          routes: <GoRoute>[
+            GoRoute(
+              path: "/panier",
+              name: "panier",
+              builder: (context, state) => PanierPage(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
           initialLocation: "/compte",
           routes: <GoRoute>[
             GoRoute(
@@ -55,15 +66,14 @@ final appRouter = GoRouter(
       ],
     ),
     GoRoute(
-      path: "/auth",
-      redirect: (context, state) => "/auth/connexion",
-      routes: <GoRoute>[
-        GoRoute(
-          path: "/connexion",
-          name: "connexion",
-          builder: (context, state) => LoginPage(),
-        ),
-      ],
+      path: "/connexion",
+      name: "connexion",
+      builder: (context, state) => LoginPage(),
+    ),
+    GoRoute(
+      path: "/inscription",
+      name: "inscription",
+      builder: (context, state) => RegisterPage(),
     ),
   ],
 );

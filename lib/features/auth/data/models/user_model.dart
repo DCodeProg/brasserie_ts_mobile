@@ -8,7 +8,6 @@ class UserModel extends User {
     required super.email,
     required super.nom,
     required super.prenom,
-    required super.dateNaissance,
     required super.createdAt,
   });
 
@@ -18,7 +17,6 @@ class UserModel extends User {
       'email': email,
       'nom': nom,
       'prenom': prenom,
-      'dateNaissance': dateNaissance.toIso8601String().substring(0, 10),
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -29,7 +27,6 @@ class UserModel extends User {
       email: map['email'] as String,
       nom: map['nom'] as String,
       prenom: map['prenom'] as String,
-      dateNaissance: DateTime.parse(map['dateNaissance']),
       createdAt: DateTime.parse(map['createdAt']).toLocal(),
     );
   }
@@ -45,7 +42,6 @@ class UserModel extends User {
     String? email,
     String? nom,
     String? prenom,
-    DateTime? dateNaissance,
     DateTime? createdAt,
   }) {
     return UserModel(
@@ -53,7 +49,6 @@ class UserModel extends User {
       email: email ?? this.email,
       nom: nom ?? this.nom,
       prenom: prenom ?? this.prenom,
-      dateNaissance: dateNaissance ?? this.dateNaissance,
       createdAt: createdAt ?? this.createdAt,
     );
   }

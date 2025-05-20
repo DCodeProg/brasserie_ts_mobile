@@ -42,16 +42,6 @@ class MyInformationsPage extends StatelessWidget {
                           Divider(height: 0),
                           ListTile(
                             title: Text(
-                              DateFormatter.dateTimeToDayMonthYear(
-                                state.user.dateNaissance,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            leading: Icon(Icons.cake),
-                          ),
-                          Divider(height: 0),
-                          ListTile(
-                            title: Text(
                               DateFormatter.dateTimeToDayMonthYearHourMinSec(
                                 state.user.createdAt,
                               ),
@@ -81,30 +71,30 @@ class MyInformationsPage extends StatelessWidget {
               },
             ),
             SizedBox(height: 16),
-            SizedBox(
-              width: 250,
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: Icon(Icons.edit),
-                label: Text("Modifier des informations"),
-              ),
-            ),
-            SizedBox(
-              width: 250,
-              child: FilledButton.icon(
-                onPressed: () {},
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    ColorScheme.of(context).errorContainer,
-                  ),
-                  foregroundColor: WidgetStatePropertyAll(
-                    ColorScheme.of(context).onErrorContainer,
-                  ),
-                ),
-                icon: Icon(Icons.delete_forever),
-                label: Text("Supprimer mon compte"),
-              ),
-            ),
+            // SizedBox(
+            //   width: 250,
+            //   child: OutlinedButton.icon(
+            //     onPressed: () {},
+            //     icon: Icon(Icons.edit),
+            //     label: Text("Modifier des informations"),
+            //   ),
+            // ),
+            // SizedBox(
+            //   width: 250,
+            //   child: FilledButton.icon(
+            //     onPressed: () {},
+            //     style: ButtonStyle(
+            //       backgroundColor: WidgetStatePropertyAll(
+            //         ColorScheme.of(context).errorContainer,
+            //       ),
+            //       foregroundColor: WidgetStatePropertyAll(
+            //         ColorScheme.of(context).onErrorContainer,
+            //       ),
+            //     ),
+            //     icon: Icon(Icons.delete_forever),
+            //     label: Text("Supprimer mon compte"),
+            //   ),
+            // ),
           ],
         ),
       ),

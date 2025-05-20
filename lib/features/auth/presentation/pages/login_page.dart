@@ -20,13 +20,31 @@ class LoginPage extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text("Connexion")),
+        appBar: AppBar(
+          title: Text("Connexion"),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(4),
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthLoadingState) {
+                  return LinearProgressIndicator();
+                }
+                return Container();
+              },
+            ),
+          ),
+        ),
         body: GradientSingleSchildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16),
+            padding: const EdgeInsets.only(
+              bottom: 24.0,
+              top: 20,
+              left: 16,
+              right: 16,
+            ),
             child: Column(
               spacing: 24,
-              children: [_LoginHeader(), _LoginForm()],
+              children: [_LoginHeader(), _LoginForm(), _NoAccountButton()],
             ),
           ),
         ),
@@ -52,6 +70,7 @@ class _LoginHeader extends StatelessWidget {
             style: TextTheme.of(context).titleSmall?.copyWith(
               color: ColorScheme.of(context).onSurfaceVariant,
             ),
+            textAlign: TextAlign.justify,
           ),
         ],
       ),
@@ -79,12 +98,28 @@ class _LoginForm extends StatelessWidget {
             _PasswordFormFieldGroup(
               passwordTextController: passwordTextController,
             ),
-            _LoginButton(
-              formKey: formKey,
-              emailTextController: emailTextController,
-              passwordTextController: passwordTextController,
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                return _LoginButton(
+                  formKey: formKey,
+                  emailTextController: emailTextController,
+                  passwordTextController: passwordTextController,
+                );
+              },
             ),
-            _NoAccountButton(),
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthFailureState) {
+                  return Text(
+                    state.message,
+                    style: TextTheme.of(context).labelLarge?.copyWith(
+                      color: ColorScheme.of(context).error,
+                    ),
+                  );
+                }
+                return Container();
+              },
+            ),
           ],
         ),
       ),
@@ -181,6 +216,7 @@ class _NoAccountButton extends StatelessWidget {
       child: RichText(
         text: TextSpan(
           text: "Pas de compte ? ",
+          style: TextTheme.of(context).bodySmall,
           children: [
             TextSpan(
               text: "Créer un compte",

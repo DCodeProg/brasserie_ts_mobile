@@ -17,9 +17,9 @@ TextTheme createTextTheme(
     baseTextTheme,
   );
   TextTheme textTheme = displayTextTheme.copyWith(
-    headlineLarge: bodyTextTheme.headlineLarge,
-    headlineMedium: bodyTextTheme.headlineMedium,
-    headlineSmall: bodyTextTheme.headlineSmall,
+    // headlineLarge: bodyTextTheme.headlineLarge,
+    // headlineMedium: bodyTextTheme.headlineMedium,
+    // headlineSmall: bodyTextTheme.headlineSmall,
     titleLarge: bodyTextTheme.titleLarge,
     titleMedium: bodyTextTheme.titleMedium,
     titleSmall: bodyTextTheme.titleSmall,
