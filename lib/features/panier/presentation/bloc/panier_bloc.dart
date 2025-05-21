@@ -1,3 +1,4 @@
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -44,8 +45,21 @@ class PanierBloc extends Bloc<PanierEvent, PanierState> {
     );
 
     res.fold(
-      (l) => emit(PanierFailureState(message: l.message)),
-      (r) => _emitPanier(r, emit),
+      (l) {
+        Aptabase.instance.trackEvent("panier_item_add_failed", {
+          "item_id": event.itemId,
+          "quantite": event.quantite,
+          "error": l.message,
+        });
+        emit(PanierFailureState(message: l.message));
+      },
+      (r) {
+        Aptabase.instance.trackEvent("panier_item_added", {
+          "item_id": event.itemId,
+          "quantite": event.quantite,
+        });
+        _emitPanier(r, emit);
+      },
     );
   }
 
@@ -58,8 +72,16 @@ class PanierBloc extends Bloc<PanierEvent, PanierState> {
     final res = await clearItems();
 
     res.fold(
-      (l) => emit(PanierFailureState(message: l.message)),
-      (r) => _emitPanier(r, emit),
+      (l) {
+        Aptabase.instance.trackEvent("panier_clear_failed", {
+          "error": l.message,
+        });
+        emit(PanierFailureState(message: l.message));
+      },
+      (r) {
+        Aptabase.instance.trackEvent("panier_cleared");
+        _emitPanier(r, emit);
+      },
     );
   }
 
@@ -86,8 +108,19 @@ class PanierBloc extends Bloc<PanierEvent, PanierState> {
     final res = await removeItem(RemoveItemParams(itemId: event.itemId));
 
     res.fold(
-      (l) => emit(PanierFailureState(message: l.message)),
-      (r) => _emitPanier(r, emit),
+      (l) {
+        Aptabase.instance.trackEvent("panier_item_remove_failed", {
+          "item_id": event.itemId,
+          "error": l.message,
+        });
+        emit(PanierFailureState(message: l.message));
+      },
+      (r) {
+        Aptabase.instance.trackEvent("panier_item_removed", {
+          "item_id": event.itemId,
+        });
+        _emitPanier(r, emit);
+      },
     );
   }
 
