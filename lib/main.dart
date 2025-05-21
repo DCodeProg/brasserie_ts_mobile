@@ -10,6 +10,7 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/categories/presentation/bloc/categories_bloc.dart';
 import 'features/panier/presentation/bloc/panier_bloc.dart';
 import 'features/produits/presentation/bloc/products_bloc.dart';
+import 'features/reservations/presentation/bloc/reservations_bloc.dart';
 import 'init_dependencies.dart';
 
 Future<void> main() async {
@@ -25,6 +26,7 @@ Future<void> main() async {
         BlocProvider(create: (context) => getIt<CategoriesBloc>()),
         BlocProvider(create: (context) => getIt<ProductsBloc>()),
         BlocProvider(create: (context) => getIt<PanierBloc>()),
+        BlocProvider(create: (context) => getIt<ReservationsBloc>()),
       ],
       child: MainApp(),
     ),

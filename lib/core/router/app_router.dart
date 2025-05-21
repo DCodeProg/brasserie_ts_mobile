@@ -1,11 +1,12 @@
-import 'package:brasserie_ts_mobile/features/auth/presentation/pages/register_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/my_informations_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/panier/presentation/pages/panier_page.dart';
 import '../../features/produits/presentation/pages/product_detail_page.dart';
 import '../../features/produits/presentation/pages/products_page.dart';
+import '../../features/reservations/presentation/pages/reservations_page.dart';
 import '../shared/layouts/main_layout.dart';
 import '../shared/pages/account_page.dart';
 
@@ -58,6 +59,11 @@ final appRouter = GoRouter(
                   path: "/informations",
                   name: "mes informations",
                   builder: (context, state) => MyInformationsPage(),
+                ),
+                GoRoute(
+                  path: "/reservations",
+                  name: "reservations",
+                  builder: (context, state) => ReservationsPage(),
                 ),
               ],
             ),

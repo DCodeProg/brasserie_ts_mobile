@@ -16,61 +16,69 @@ class AccountPage extends StatelessWidget {
         title: Text("Compte", style: TextTheme.of(context).displaySmall),
       ),
       body: SafeArea(
-        child: Expanded(
-          child: SingleChildScrollView(
-            child: BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                if (state is AuthSuccessState) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 50.0),
-                        child: _AvatarWidget(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Card(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: Column(
-                            children: [
-                              _MyInfosTile(),
-                              Divider(height: 0),
-                              _AppThemeTile(),
-                              Divider(height: 0),
-                              _SignOutTile(),
-                            ],
-                          ),
+        child: SingleChildScrollView(
+          child: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state is AuthSuccessState) {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 50.0),
+                      child: _AvatarWidget(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Card(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        child: Column(
+                          children: [
+                            _MyInfosTile(),
+                            Divider(height: 0),
+                            ListTile(
+                              title: Text("Mes réservations"),
+                              leading: Icon(Icons.sell_outlined),
+                              trailing: Icon(Icons.chevron_right),
+                              onTap: () {
+                                HapticFeedback.selectionClick();
+                                context.pushNamed("reservations");
+                              },
+                            ),
+                            Divider(height: 0),
+                            _AppThemeTile(),
+                            Divider(height: 0),
+                            _SignOutTile(),
+                          ],
                         ),
                       ),
-                    ],
-                  );
-                } else {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 50.0),
-                        child: _AvatarWidget(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Card(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: Column(
-                            children: [
-                              // _MyInfosTile(),
-                              // Divider(height: 0),
-                              _SignInTile(),
-                              Divider(height: 0),
-                              _AppThemeTile(),
-                            ],
-                          ),
+                    ),
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 50.0),
+                      child: _AvatarWidget(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Card(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        child: Column(
+                          children: [
+                            // _MyInfosTile(),
+                            // Divider(height: 0),
+                            _SignInTile(),
+                            Divider(height: 0),
+                            _AppThemeTile(),
+                          ],
                         ),
                       ),
-                    ],
-                  );
-                }
-              },
-            ),
+                    ),
+                  ],
+                );
+              }
+            },
           ),
         ),
       ),
