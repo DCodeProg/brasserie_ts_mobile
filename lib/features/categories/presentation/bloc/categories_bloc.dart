@@ -37,7 +37,7 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
     if (state is CategoriesLoadedState) {
       return (state as CategoriesLoadedState).categories
           .where((category) => category.id == categoryId)
-          .first;
+          .singleOrNull;
     }
     return null;
   }
