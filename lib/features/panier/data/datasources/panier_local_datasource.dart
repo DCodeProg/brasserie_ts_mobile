@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/errors/exceptions.dart';
@@ -91,8 +93,10 @@ class PanierLocalDatasourceImpl implements PanierLocalDatasource {
     required int quantity,
   }) async {
     final currentPanier = await loadPanier();
-    final itemIndex = currentPanier.panierItems.indexWhere((item) => item.product.id == itemId);
-    
+    final itemIndex = currentPanier.panierItems.indexWhere(
+      (item) => item.product.id == itemId,
+    );
+
     if (itemIndex == -1) {
       throw CacheException(message: "Item non trouvé dans le panier");
     }
@@ -104,7 +108,10 @@ class PanierLocalDatasourceImpl implements PanierLocalDatasource {
     final updatedItems = List<PanierItem>.from(currentPanier.panierItems);
     updatedItems[itemIndex] = PanierItem(
       product: currentPanier.panierItems[itemIndex].product,
-      quantity: quantity
+      quantity: min(
+        quantity,
+        currentPanier.panierItems[itemIndex].product.quantity,
+      ),
     );
 
     final updatedPanier = currentPanier.copyWith(panierItems: updatedItems);
