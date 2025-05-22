@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../categories/presentation/bloc/categories_bloc.dart';
 import '../../domain/entities/product.dart';
 import '../bloc/products_bloc.dart';
 import '../widgets/product_list_item.dart';
@@ -23,12 +22,68 @@ class ProductsPage extends StatelessWidget {
             case ProductsInitialState():
             case ProductsLoadingState():
               return _ProductsLoadingWidget();
-            case ProductsLoadedState():
-              return _ProductListWidget(products: state.products);
             case ProductsFailureState():
               return _ProductFailureWidget(message: state.message);
+            case ProductsLoadedState():
+              return _ProductLoadedWidget(products: state.products);
           }
         },
+      ),
+    );
+  }
+}
+
+class _ProductLoadedWidget extends StatelessWidget {
+  const _ProductLoadedWidget({required this.products});
+
+  final List<Product> products;
+
+  @override
+  Widget build(BuildContext context) {
+    if (products.isNotEmpty) {
+      return _ProductListWidget(products: products);
+    } else {
+      return _ProductEmptyWidget();
+    }
+  }
+}
+
+class _ProductEmptyWidget extends StatelessWidget {
+  const _ProductEmptyWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    void refreshProducts() {
+      HapticFeedback.selectionClick();
+      context.read<ProductsBloc>().add(ProductsFetchAllProductsEvent());
+    }
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.production_quantity_limits,
+              size: 50,
+              color: ColorScheme.of(context).primary,
+            ),
+            SizedBox(height: 16),
+            Text(
+              "Aucun produit disponible",
+              style: TextTheme.of(context).labelLarge,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: refreshProducts,
+              icon: Icon(Icons.refresh),
+              label: Text("Recharger"),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -41,62 +96,26 @@ class _ProductListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void refreshProducts() {
+    Future<void> refreshProducts() async {
       HapticFeedback.selectionClick();
       context.read<ProductsBloc>().add(ProductsFetchAllProductsEvent());
     }
 
-    if (products.isNotEmpty) {
-      return RefreshIndicator(
-        onRefresh: () async {
-          context.read<ProductsBloc>().add(ProductsFetchAllProductsEvent());
-          context.read<CategoriesBloc>().add(
-            CategoriesFetchAllCategoriesEvent(),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListView.builder(
-            padding: EdgeInsets.symmetric(vertical: 16  ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final Product product = products[index];
-              return ProductListItem(product: product);
-            },
-            // separatorBuilder: (context, index) => Divider(height: 0),
-          ),
+    return RefreshIndicator(
+      onRefresh: refreshProducts,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: ListView.builder(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            final Product product = products[index];
+            return ProductListItem(product: product);
+          },
+          // separatorBuilder: (context, index) => Divider(height: 0),
         ),
-      );
-    } else {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.production_quantity_limits,
-                size: 50,
-                color: ColorScheme.of(context).primary,
-              ),
-              SizedBox(height: 16),
-              Text(
-                "Aucun produit disponible",
-                style: TextTheme.of(context).labelLarge,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: refreshProducts,
-                icon: Icon(Icons.refresh),
-                label: Text("Recharger"),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
 }
 
@@ -117,7 +136,7 @@ class _ProductFailureWidget extends StatelessWidget {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("Détails de l'erreur"),
+            title: Text("Détails de l'erreur", style: TextTheme.of(context).titleLarge),
             content: Text(message),
             actions: [
               TextButton(
