@@ -301,7 +301,7 @@ class _AddToCartButtonState extends State<AddToCartButton> {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: _addToCart,
+        onPressed: widget.product.quantity > 0 ? _addToCart : null,
         icon: Icon(
           _animation ? Icons.shopping_cart_checkout : Icons.add_shopping_cart,
         ),
