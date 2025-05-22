@@ -2,6 +2,7 @@ import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../produits/domain/entities/product.dart';
 import '../../domain/entities/panier.dart';
 import '../../domain/usecases/add_item.dart';
 import '../../domain/usecases/clear_items.dart';
@@ -26,10 +27,18 @@ class PanierBloc extends Bloc<PanierEvent, PanierState> {
     required this.removeItem,
     required this.updateItemQuantity,
   }) : super(PanierEmptyState()) {
-    on<PanierLoadPanierEvent>((event, emit) => _onLoadPanierEvent(event, emit));
-    on<PanierAddItemEvent>((event, emit) => _onAddItemEvent(event, emit));
-    on<PanierClearItemsEvent>((event, emit) => _onClearItemsEvent(event, emit));
-    on<PanierRemoveItemEvent>((event, emit) => _onRemoveItemEvent(event, emit));
+    on<PanierLoadPanierEvent>(
+      (event, emit) => _onLoadPanierEvent(event, emit),
+    );
+    on<PanierAddItemEvent>(
+      (event, emit) => _onAddItemEvent(event, emit),
+    );
+    on<PanierClearItemsEvent>(
+      (event, emit) => _onClearItemsEvent(event, emit),
+    );
+    on<PanierRemoveItemEvent>(
+      (event, emit) => _onRemoveItemEvent(event, emit),
+    );
     on<PanierUpdateItemQuantityEvent>(
       (event, emit) => _onUpdateItemQuantityEvent(event, emit),
     );
@@ -41,22 +50,25 @@ class PanierBloc extends Bloc<PanierEvent, PanierState> {
     emit(PanierLoadingState());
 
     final res = await addItem(
-      AddItemParams(itemId: event.itemId, quantite: event.quantite),
+      AddItemParams(
+        product: event.product,
+        quantity: event.quantity,
+      ),
     );
 
     res.fold(
       (l) {
         Aptabase.instance.trackEvent("panier_item_add_failed", {
-          "item_id": event.itemId,
-          "quantite": event.quantite,
+          "item_id": event.product.id,
+          "quantity": event.quantity,
           "error": l.message,
         });
         emit(PanierFailureState(message: l.message));
       },
       (r) {
         Aptabase.instance.trackEvent("panier_item_added", {
-          "item_id": event.itemId,
-          "quantite": event.quantite,
+          "item_id": event.product.id,
+          "quantity": event.quantity,
         });
         _emitPanier(r, emit);
       },
@@ -124,10 +136,22 @@ class PanierBloc extends Bloc<PanierEvent, PanierState> {
     );
   }
 
-  void _onUpdateItemQuantityEvent(
+  Future<void> _onUpdateItemQuantityEvent(
     PanierUpdateItemQuantityEvent event,
     Emitter emit,
-  ) {}
+  ) async {
+    final res = await updateItemQuantity(
+      UpdateQuantityParams(
+        itemId: event.itemId,
+        quantity: event.quantity,
+      ),
+    );
+
+    res.fold(
+      (l) => emit(PanierFailureState(message: l.message)),
+      (r) => _emitPanier(r, emit),
+    );
+  }
 
   void _emitPanier(Panier panier, Emitter emit) {
     if (panier.panierItems.isNotEmpty) {

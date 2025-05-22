@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../produits/presentation/bloc/products_bloc.dart';
 import '../bloc/panier_bloc.dart';
+import '../widgets/panier_item_widget.dart';
 
 class PanierPage extends StatelessWidget {
   const PanierPage({super.key});
@@ -13,123 +13,103 @@ class PanierPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Panier", style: TextTheme.of(context).displaySmall),
+        title: Text(
+          "Panier",
+          style: TextTheme.of(context).displaySmall,
+        ),
+        actions: [
+          BlocBuilder<PanierBloc, PanierState>(
+            builder: (context, state) {
+              if (state is PanierLoadedState) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Card(
+                    color: ColorScheme.of(context).tertiaryContainer,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Total: ${(state.panier.panierItems.fold(0.0, (sum, item) => sum + (item.product.price * item.quantity))).toStringAsFixed(2)}€",
+                        style: TextTheme.of(context).titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: ColorScheme.of(context).onTertiaryContainer,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return Container();
+            },
+          ),
+        ],
       ),
-      body: BlocBuilder<ProductsBloc, ProductsState>(
-        builder: (context, productState) {
-          switch (productState) {
-            case ProductsInitialState():
-            case ProductsLoadingState():
-            case ProductsFailureState():
-              return Placeholder();
-            case ProductsLoadedState():
-              return BlocBuilder<PanierBloc, PanierState>(
-                builder: (context, state) {
-                  switch (state) {
-                    case PanierLoadingState():
-                      return Center(child: CircularProgressIndicator());
-                    case PanierEmptyState():
-                      return _PanierEmptyWidget();
-                    case PanierLoadedState():
-                      return Center(
+      body: BlocBuilder<PanierBloc, PanierState>(
+        builder: (context, state) {
+          switch (state) {
+            case PanierLoadingState():
+              return Center(child: CircularProgressIndicator());
+            case PanierEmptyState():
+              return _PanierEmptyWidget();
+            case PanierLoadedState():
+              return Center(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                        ),
+                        child: ListView.builder(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          itemCount: state.panier.panierItems.length,
+                          itemBuilder: (context, index) {
+                            final panierItem = state.panier.panierItems[index];
+                            return PanierItemWidget(panierItem: panierItem);
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).surfaceContainer,
+                        border: Border(top: BorderSide(
+                          color: ColorScheme.of(context).outlineVariant
+                        )),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
-                                ),
-                                child: ListView.builder(
-                                  itemCount: state.panier.panierItems.length,
-                                  itemBuilder: (context, index) {
-                                    final produit =
-                                        productState.products
-                                            .where(
-                                              (product) =>
-                                                  product.id ==
-                                                  state
-                                                      .panier
-                                                      .panierItems[index]
-                                                      .id,
-                                            )
-                                            .single;
-                                    return Card(
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      child: Dismissible(
-                                        onDismissed: (direction) {
-                                          context.read<PanierBloc>().add(
-                                            PanierRemoveItemEvent(
-                                              itemId: produit.id,
-                                            ),
-                                          );
-                                        },
-                                        background: Container(
-                                          color:
-                                              ColorScheme.of(
-                                                context,
-                                              ).errorContainer,
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 16.0),
-                                              child: Icon(
-                                                Icons
-                                                    .remove_shopping_cart_outlined,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        secondaryBackground: Container(
-                                          color:
-                                              ColorScheme.of(
-                                                context,
-                                              ).errorContainer,
-                                          child: Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(right: 16.0),
-                                              child: Icon(
-                                                Icons
-                                                    .remove_shopping_cart_outlined,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        key: GlobalKey(),
-                                        child: ListTile(
-                                          title: Text(produit.nom),
-                                          subtitle: Text(
-                                            "Quantité : ${state.panier.panierItems[index].quantite}",
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: FilledButton.icon(
+                                onPressed:
+                                    () => context.read<PanierBloc>().add(
+                                      PanierClearItemsEvent(),
+                                    ),
+                                icon: Icon(Icons.shopping_cart_checkout),
+                                label: Text("Réserver le panier"),
                               ),
-                            ),
-                            FilledButton.icon(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                              },
-                              label: Text("Réserver le panier"),
-                            ),
-                            OutlinedButton(
-                              onPressed: () {
-                                HapticFeedback.lightImpact();
-                                context.read<PanierBloc>().add(
-                                  PanierClearItemsEvent(),
-                                );
-                              },
-                              child: Text("Vider le panier"),
                             ),
                           ],
                         ),
-                      );
-                    case PanierFailureState():
-                      return Text("error: ${state.message}");
-                  }
-                },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            case PanierFailureState():
+              return Column(
+                children: [
+                  Text("Le panier a rencontré une erreur: ${state.message}"),
+                  ElevatedButton(
+                    onPressed:
+                        () => context.read<PanierBloc>().add(
+                          PanierClearItemsEvent(),
+                        ),
+                    child: Text("Vider le panier"),
+                  ),
+                ],
               );
           }
         },

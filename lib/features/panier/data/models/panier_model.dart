@@ -12,7 +12,11 @@ class PanierModel extends Panier {
       'panierItems':
           panierItems
               .map(
-                (x) => PanierItemModel(id: x.id, quantite: x.quantite).toMap(),
+                (item) =>
+                    PanierItemModel(
+                      product: item.product,
+                      quantity: item.quantity,
+                    ).toMap(),
               )
               .toList(),
     };
@@ -22,7 +26,7 @@ class PanierModel extends Panier {
     return PanierModel(
       panierItems: List<PanierItem>.from(
         map['panierItems'].map<PanierItem>(
-          (x) => PanierItemModel.fromMap(x as Map<String, dynamic>),
+          (item) => PanierItemModel.fromMap(item as Map<String, dynamic>),
         ),
       ),
     );

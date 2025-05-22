@@ -1,11 +1,19 @@
 import 'package:equatable/equatable.dart';
 
-class PanierItem extends Equatable {
-  final String id;
-  final int quantite;
+import '../../../produits/domain/entities/product.dart';
 
-  const PanierItem({required this.id, required this.quantite});
+class PanierItem extends Equatable {
+  final Product product;
+  final int quantity;
+
+  const PanierItem({
+    required this.product,
+    required this.quantity,
+  });
 
   @override
-  List<Object?> get props => [id, quantite];
+  List<Object?> get props => [
+    product,
+    quantity,
+  ];
 }

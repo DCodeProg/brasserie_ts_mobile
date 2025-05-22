@@ -5,18 +5,18 @@ import '../../domain/entities/category.dart';
 class CategoryModel extends Category {
   const CategoryModel({
     required super.id,
-    required super.nom,
+    required super.name,
     required super.description,
   });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{'id': id, 'nom': nom, 'description': description};
+    return <String, dynamic>{'id': id, 'nom': name, 'description': description};
   }
 
   factory CategoryModel.fromMap(Map<String, dynamic> map) {
     return CategoryModel(
       id: map['id'] as String,
-      nom: map['nom'] as String,
+      name: map['nom'] as String,
       description:
           map['description'] != null ? map['description'] as String : null,
     );
@@ -24,6 +24,15 @@ class CategoryModel extends Category {
 
   String toJson() => json.encode(toMap());
 
-  factory CategoryModel.fromJson(String source) =>
-      CategoryModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory CategoryModel.fromJson(String source) {
+    return CategoryModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  }
+
+  factory CategoryModel.fromEntity(Category category) {
+    return CategoryModel(
+      id: category.id,
+      name: category.name,
+      description: category.description,
+    );
+  }
 }

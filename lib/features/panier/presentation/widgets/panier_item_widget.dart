@@ -1,39 +1,36 @@
+import '../bloc/panier_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../panier/presentation/bloc/panier_bloc.dart';
-import '../../domain/entities/product.dart';
+import '../../../produits/domain/entities/product.dart';
+import '../../domain/entities/panier_item.dart';
 
-class ProductListItem extends StatelessWidget {
-  const ProductListItem({super.key, required this.product});
+class PanierItemWidget extends StatelessWidget {
+  const PanierItemWidget({
+    super.key,
+    required this.panierItem,
+  });
 
-  final Product product;
+  final PanierItem panierItem;
 
   @override
   Widget build(BuildContext context) {
-    void openProductDetailPage() {
-      HapticFeedback.selectionClick();
-      context.push("/produits/${product.id}");
-    }
-
     return Card.outlined(
       color: ColorScheme.of(context).surfaceContainer,
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: InkWell(
-        onTap: openProductDetailPage,
-        child: _CardContent(product: product),
-      ),
+      child: _CardContent(panierItem: panierItem),
     );
   }
 }
 
 class _CardContent extends StatelessWidget {
-  const _CardContent({required this.product});
+  const _CardContent({
+    required this.panierItem,
+  });
 
-  final Product product;
+  final PanierItem panierItem;
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +38,75 @@ class _CardContent extends StatelessWidget {
       children: [
         IntrinsicHeight(
           child: Row(
+            mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _ProductImage(product: product),
-              _ProductDescriptif(product: product),
+              _ProductImage(product: panierItem.product),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _ProductDescriptif(product: panierItem.product),
+                      Divider(),
+                      Row(
+                        children: [
+                          Spacer(),
+                          Text(
+                            "${panierItem.product.price}€",
+                            style: TextTheme.of(context).titleMedium,
+                          ),
+                          Spacer(),
+                          Card.outlined(
+                            color: ColorScheme.of(context).surfaceContainerHigh,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  onPressed:
+                                      () => context.read<PanierBloc>().add(
+                                        PanierUpdateItemQuantityEvent(
+                                          itemId: panierItem.product.id,
+                                          quantity: panierItem.quantity - 1,
+                                        ),
+                                      ),
+                                  icon: Icon(Icons.remove),
+                                ),
+                                Text(panierItem.quantity.toString()),
+                                IconButton(
+                                  onPressed:
+                                      () => context.read<PanierBloc>().add(
+                                        PanierUpdateItemQuantityEvent(
+                                          itemId: panierItem.product.id,
+                                          quantity: panierItem.quantity + 1,
+                                        ),
+                                      ),
+                                  icon: Icon(Icons.add),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed:
+                              () => context.read<PanierBloc>().add(
+                                PanierRemoveItemEvent(
+                                  itemId: panierItem.product.id,
+                                ),
+                              ),
+                          icon: Icon(Icons.remove_shopping_cart_outlined),
+                          label: Text("Retirer du panier"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -104,21 +166,25 @@ class _ProductDescriptif extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              product.name,
-              style: TextTheme.of(context).titleMedium,
-            ),
-            _ProductDetails(product: product),
-          ],
-        ),
+    return InkWell(
+      onTap: () => context.push('/produits/${product.id}'),
+      child: Row(
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                product.name,
+                style: TextTheme.of(context).titleMedium,
+              ),
+              _ProductDetails(product: product),
+            ],
+          ),
+          Spacer(),
+          Icon(Icons.chevron_right),
+        ],
       ),
     );
   }
@@ -131,21 +197,6 @@ class _ProductDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void addToCart() {
-      context.read<PanierBloc>().add(
-        PanierAddItemEvent(
-          product: product,
-          quantity: 1,
-        ),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("${product.name} ajouté au panier"),
-          duration: Durations.extralong1,
-        ),
-      );
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -158,26 +209,6 @@ class _ProductDetails extends StatelessWidget {
           ],
         ),
         SizedBox(height: 4),
-        _ProductDescription(product: product),
-        SizedBox(height: 8),
-        Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _ProductPrice(product: product),
-                _StockIndicator(product: product),
-              ],
-            ),
-            Spacer(),
-            IconButton.filled(
-              iconSize: 20,
-              visualDensity: VisualDensity(horizontal: -2, vertical: -2),
-              onPressed: product.quantity > 0 ? addToCart : null,
-              icon: Icon(Icons.add_shopping_cart),
-            ),
-          ],
-        ),
       ],
     );
   }
@@ -249,70 +280,5 @@ class _ProductDegre extends StatelessWidget {
         ),
       ],
     );
-  }
-}
-
-class _ProductDescription extends StatelessWidget {
-  const _ProductDescription({required this.product});
-
-  final Product product;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      product.description ?? "Ce produit n'a pas de description",
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-      style: TextTheme.of(context).bodySmall?.copyWith(
-        fontStyle: product.description == null ? FontStyle.italic : null,
-      ),
-    );
-  }
-}
-
-class _ProductPrice extends StatelessWidget {
-  const _ProductPrice({required this.product});
-
-  final Product product;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      "${product.price.toStringAsFixed(2)}€",
-      style: TextTheme.of(context).titleMedium,
-    );
-  }
-}
-
-class _StockIndicator extends StatelessWidget {
-  const _StockIndicator({required this.product});
-
-  final Product product;
-
-  @override
-  Widget build(BuildContext context) {
-    if (product.quantity >= 10) {
-      return Text(
-        "En stock",
-        style: TextTheme.of(
-          context,
-        ).labelSmall?.copyWith(color: ColorScheme.of(context).tertiary),
-      );
-    } else if (product.quantity > 0) {
-      return Text(
-        "${product.quantity} restant(s)",
-        style: TextTheme.of(
-          context,
-        ).labelSmall?.copyWith(color: ColorScheme.of(context).error),
-      );
-    } else {
-      return Text(
-        "En rupture de stock",
-        style: TextTheme.of(context).labelSmall?.copyWith(
-          color: ColorScheme.of(context).error,
-          fontStyle: FontStyle.italic,
-        ),
-      );
-    }
   }
 }
