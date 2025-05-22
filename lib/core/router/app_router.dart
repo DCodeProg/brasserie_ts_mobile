@@ -1,8 +1,8 @@
-import 'package:brasserie_ts_mobile/features/auth/presentation/pages/register_page.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/my_informations_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/panier/presentation/pages/panier_page.dart';
 import '../../features/produits/presentation/pages/product_detail_page.dart';
 import '../../features/produits/presentation/pages/products_page.dart';
