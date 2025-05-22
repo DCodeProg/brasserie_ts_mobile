@@ -1,6 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/errors/failures.dart';
+import '../../../produits/domain/entities/product.dart';
 import '../../domain/entities/panier.dart';
 import '../../domain/repositories/panier_repository.dart';
 import '../datasources/panier_local_datasource.dart';
@@ -12,15 +13,17 @@ class PanierRepositoryImpl implements PanierRepository {
 
   @override
   Future<Either<Failure, Panier>> addItem({
-    required String itemId,
-    required int quantite,
+    required Product product,
+    required int quantity,
   }) async {
     try {
       final panier = await localDatasource.addItem(
-        itemId: itemId,
-        quantite: quantite,
+        product: product,
+        quantity: quantity,
       );
-      return right(panier);
+      return right(
+        panier,
+      );
     } catch (e) {
       return left(CacheFailure(message: e.toString()));
     }
@@ -59,12 +62,12 @@ class PanierRepositoryImpl implements PanierRepository {
   @override
   Future<Either<Failure, Panier>> updateItemQuantity({
     required String itemId,
-    required int quantite,
+    required int quantity,
   }) async {
     try {
       final panier = await localDatasource.updateItemQuantity(
         itemId: itemId,
-        quantite: quantite,
+        quantity: quantity,
       );
       return right(panier);
     } catch (e) {

@@ -32,4 +32,13 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
       (r) => emit(ProductsLoadedState(products: r)),
     );
   }
+
+  Product? getProductById(String productId) {
+    if (state is ProductsLoadedState) {
+      return (state as ProductsLoadedState).products
+          .where((product) => product.id == productId)
+          .singleOrNull;
+    }
+    return null;
+  }
 }

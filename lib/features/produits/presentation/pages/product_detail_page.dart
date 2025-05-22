@@ -2,8 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../categories/domain/entities/category.dart';
-import '../../../categories/presentation/bloc/categories_bloc.dart';
 import '../../../panier/presentation/bloc/panier_bloc.dart';
 import '../../domain/entities/product.dart';
 import '../bloc/products_bloc.dart';
@@ -30,10 +28,12 @@ class ProductDetailPage extends StatelessWidget {
                 return Placeholder();
 
               case ProductsLoadedState():
-                final Product? product =
-                    state.products
-                        .where((product) => product.id == produitId)
-                        .firstOrNull;
+                if (produitId == null) {
+                  return Placeholder();
+                }
+                final Product? product = context
+                    .read<ProductsBloc>()
+                    .getProductById(produitId!);
                 if (product != null) {
                   return _ProductDetailsWidget(product: product);
                 } else {
@@ -90,7 +90,7 @@ class _ProductDetailsWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.nom,
+                        product.name,
                         style: TextTheme.of(context).headlineSmall,
                       ),
                       Row(
@@ -98,45 +98,26 @@ class _ProductDetailsWidget extends StatelessWidget {
                         children: [
                           Icon(Icons.category_outlined, size: 15),
                           SizedBox(width: 4),
-                          BlocBuilder<CategoriesBloc, CategoriesState>(
-                            builder: (context, state) {
-                              switch (state) {
-                                case CategoriesLoadedState():
-                                  if (product.categorieId == null) {
-                                    return Text(
-                                      "Non catégorisé",
-                                      style: TextTheme.of(
-                                        context,
-                                      ).labelMedium?.copyWith(
-                                        color:
-                                            ColorScheme.of(
-                                              context,
-                                            ).onSurfaceVariant,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    );
-                                  }
-
-                                  final Category? category = context
-                                      .read<CategoriesBloc>()
-                                      .getCategoryById(product.categorieId!);
-
-                                  return Text(
-                                    category != null ? category.nom : "Autres",
-                                    style: TextTheme.of(context).labelMedium,
-                                  );
-
-                                case _:
-                                  return Text(
-                                    "Indisponible",
-                                    style: TextTheme.of(
-                                      context,
-                                    ).labelMedium?.copyWith(
-                                      color: ColorScheme.of(context).error,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  );
+                          Builder(
+                            builder: (context) {
+                              if (product.category == null) {
+                                return Text(
+                                  "Non catégorisé",
+                                  style: TextTheme.of(
+                                    context,
+                                  ).labelMedium?.copyWith(
+                                    color:
+                                        ColorScheme.of(
+                                          context,
+                                        ).onSurfaceVariant,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                );
                               }
+                              return Text(
+                                product.category!.name,
+                                style: TextTheme.of(context).labelMedium,
+                              );
                             },
                           ),
                         ],
@@ -162,8 +143,8 @@ class _ProductDetailsWidget extends StatelessWidget {
                               Icon(Icons.thermostat, size: 15),
                               SizedBox(width: 4),
                               Text(
-                                product.degre != null
-                                    ? "${product.degre}°"
+                                product.degree != null
+                                    ? "${product.degree}°"
                                     : "Inconnu",
                                 style: TextTheme.of(context).labelMedium,
                               ),
@@ -230,21 +211,21 @@ class _AddToCartWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${product.prix.toStringAsFixed(2)} €",
+                    "${product.price.toStringAsFixed(2)} €",
                     style: TextTheme.of(context).headlineSmall,
                   ),
                   Builder(
                     builder: (context) {
-                      if (product.quantite >= 10) {
+                      if (product.quantity >= 10) {
                         return Text(
                           "En stock",
                           style: TextTheme.of(context).labelMedium?.copyWith(
                             color: ColorScheme.of(context).tertiary,
                           ),
                         );
-                      } else if (product.quantite > 0) {
+                      } else if (product.quantity > 0) {
                         return Text(
-                          "${product.quantite} restant(s)",
+                          "${product.quantity} restant(s)",
                           style: TextTheme.of(context).labelMedium?.copyWith(
                             color: ColorScheme.of(context).error,
                           ),
@@ -276,7 +257,9 @@ class _AddToCartWidget extends StatelessWidget {
               // ),
             ],
           ),
-          SizedBox(height: 16),
+          SizedBox(
+            height: 16,
+          ),
           AddToCartButton(product: product),
         ],
       ),
@@ -298,7 +281,10 @@ class _AddToCartButtonState extends State<AddToCartButton> {
   Future<void> _addToCart() async {
     if (!_animation) {
       context.read<PanierBloc>().add(
-        PanierAddItemEvent(itemId: widget.product.id, quantite: 1),
+        PanierAddItemEvent(
+          product: widget.product,
+          quantity: 1,
+        ),
       );
       setState(() {
         _animation = true;
