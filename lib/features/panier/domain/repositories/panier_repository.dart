@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/errors/failures.dart';
-import '../../../produits/domain/entities/product.dart';
+import '../../../products/domain/entities/product.dart';
 import '../entities/panier.dart';
 
 abstract interface class PanierRepository {

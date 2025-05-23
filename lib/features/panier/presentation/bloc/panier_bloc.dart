@@ -2,7 +2,7 @@ import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../../produits/domain/entities/product.dart';
+import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/panier.dart';
 import '../../domain/usecases/add_item.dart';
 import '../../domain/usecases/clear_items.dart';

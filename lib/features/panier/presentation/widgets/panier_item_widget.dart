@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../produits/domain/entities/product.dart';
+import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/panier_item.dart';
 import '../bloc/panier_bloc.dart';
 

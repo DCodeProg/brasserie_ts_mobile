@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecase/usecase.dart';
-import '../../../produits/domain/entities/product.dart';
+import '../../../products/domain/entities/product.dart';
 import '../entities/panier.dart';
 import '../repositories/panier_repository.dart';
 

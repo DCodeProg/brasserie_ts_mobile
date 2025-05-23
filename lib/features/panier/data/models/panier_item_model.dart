@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../../../produits/data/models/product_model.dart';
+import '../../../products/data/models/product_model.dart';
 import '../../domain/entities/panier_item.dart';
 
 class PanierItemModel extends PanierItem {

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/errors/exceptions.dart';
-import '../../../produits/domain/entities/product.dart';
+import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/panier_item.dart';
 import '../models/panier_model.dart';
 

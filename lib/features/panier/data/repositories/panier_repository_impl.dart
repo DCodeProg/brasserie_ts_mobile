@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/errors/failures.dart';
-import '../../../produits/domain/entities/product.dart';
+import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/panier.dart';
 import '../../domain/repositories/panier_repository.dart';
 import '../datasources/panier_local_datasource.dart';
