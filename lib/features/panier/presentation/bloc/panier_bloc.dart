@@ -160,4 +160,18 @@ class PanierBloc extends Bloc<PanierEvent, PanierState> {
       emit(PanierEmptyState());
     }
   }
+
+  int getQuantityForProduct(String productId) {
+    if (state is PanierLoadedState) {
+      final panier = (state as PanierLoadedState).panier;
+      final item =
+          panier.panierItems
+              .where(
+                (panierItem) => panierItem.product.id == productId,
+              )
+              .singleOrNull;
+      return item != null ? item.quantity : 0;
+    }
+    return 0;
+  }
 }

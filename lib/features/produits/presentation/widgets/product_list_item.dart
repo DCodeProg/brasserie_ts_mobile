@@ -291,16 +291,20 @@ class _StockIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (product.quantity >= 10) {
+    final availableQuantity =
+        product.quantity -
+        context.read<PanierBloc>().getQuantityForProduct(product.id);
+
+    if (availableQuantity >= 10) {
       return Text(
         "En stock",
         style: TextTheme.of(
           context,
         ).labelSmall?.copyWith(color: ColorScheme.of(context).tertiary),
       );
-    } else if (product.quantity > 0) {
+    } else if (availableQuantity > 0) {
       return Text(
-        "${product.quantity} restant(s)",
+        "$availableQuantity restant(s)",
         style: TextTheme.of(
           context,
         ).labelSmall?.copyWith(color: ColorScheme.of(context).error),

@@ -14,7 +14,10 @@ class ProductsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Produits", style: TextTheme.of(context).displaySmall),
+        title: Text(
+          "Produits",
+          style: TextTheme.of(context).displaySmall,
+        ),
       ),
       body: BlocBuilder<ProductsBloc, ProductsState>(
         builder: (context, state) {
@@ -136,7 +139,10 @@ class _ProductFailureWidget extends StatelessWidget {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text("Détails de l'erreur", style: TextTheme.of(context).titleLarge),
+            title: Text(
+              "Détails de l'erreur",
+              style: TextTheme.of(context).titleLarge,
+            ),
             content: Text(message),
             actions: [
               TextButton(

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../panier/presentation/bloc/panier_bloc.dart';
@@ -214,26 +215,37 @@ class _AddToCartWidget extends StatelessWidget {
                     "${product.price.toStringAsFixed(2)} €",
                     style: TextTheme.of(context).headlineSmall,
                   ),
-                  Builder(
-                    builder: (context) {
-                      if (product.quantity >= 10) {
+                  BlocBuilder<PanierBloc, PanierState>(
+                    builder: (context, state) {
+                      final availableQuantity =
+                          product.quantity -
+                          context.read<PanierBloc>().getQuantityForProduct(
+                            product.id,
+                          );
+                      if (availableQuantity >= 10) {
                         return Text(
                           "En stock",
-                          style: TextTheme.of(context).labelMedium?.copyWith(
+                          style: TextTheme.of(
+                            context,
+                          ).labelMedium?.copyWith(
                             color: ColorScheme.of(context).tertiary,
                           ),
                         );
-                      } else if (product.quantity > 0) {
+                      } else if (availableQuantity > 0) {
                         return Text(
-                          "${product.quantity} restant(s)",
-                          style: TextTheme.of(context).labelMedium?.copyWith(
+                          "$availableQuantity restant(s)",
+                          style: TextTheme.of(
+                            context,
+                          ).labelMedium?.copyWith(
                             color: ColorScheme.of(context).error,
                           ),
                         );
                       } else {
                         return Text(
                           "En rupture de stock",
-                          style: TextTheme.of(context).labelMedium?.copyWith(
+                          style: TextTheme.of(
+                            context,
+                          ).labelMedium?.copyWith(
                             color: ColorScheme.of(context).error,
                             fontStyle: FontStyle.italic,
                           ),
@@ -279,33 +291,43 @@ class AddToCartButton extends StatefulWidget {
 class _AddToCartButtonState extends State<AddToCartButton> {
   bool _animation = false;
   Future<void> _addToCart() async {
-    if (!_animation) {
-      context.read<PanierBloc>().add(
-        PanierAddItemEvent(
-          product: widget.product,
-          quantity: 1,
-        ),
-      );
-      setState(() {
-        _animation = true;
-      });
-      await Future.delayed(Duration(seconds: 1));
-      setState(() {
-        _animation = false;
-      });
-    }
+    HapticFeedback.heavyImpact();
+    context.read<PanierBloc>().add(
+      PanierAddItemEvent(
+        product: widget.product,
+        quantity: 1,
+      ),
+    );
+    setState(() {
+      _animation = true;
+    });
+    await Future.delayed(Duration(seconds: 1));
+    setState(() {
+      _animation = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: widget.product.quantity > 0 ? _addToCart : null,
-        icon: Icon(
-          _animation ? Icons.shopping_cart_checkout : Icons.add_shopping_cart,
-        ),
-        label: Text(_animation ? "Ajouté !" : "Ajouter au panier"),
+      child: BlocBuilder<PanierBloc, PanierState>(
+        builder: (context, state) {
+          final availableQuantity =
+              widget.product.quantity -
+              context.read<PanierBloc>().getQuantityForProduct(
+                widget.product.id,
+              );
+          return FilledButton.icon(
+            onPressed: availableQuantity > 0 ? _addToCart : null,
+            icon: Icon(
+              _animation
+                  ? Icons.shopping_cart_checkout
+                  : Icons.add_shopping_cart,
+            ),
+            label: Text(_animation ? "Ajouté !" : "Ajouter au panier"),
+          );
+        },
       ),
     );
   }

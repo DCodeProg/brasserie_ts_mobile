@@ -1,12 +1,15 @@
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/errors/failures.dart';
+import '../../../panier/domain/entities/panier.dart';
 import '../entities/reservation.dart';
 
 abstract interface class ReservationsRepository {
-  Future<Either<Failure, Reservation>> createReservation(Reservation reservation);
-  Future<Either<Failure, Reservation>> updateReservation(Reservation reservation);
-  Future<Either<Failure, void>> deleteReservation(int reservationId);
-  Future<Either<Failure, Reservation?>> getReservationById(int reservationId);
+  Future<Either<Failure, Reservation>> createReservation({
+    required Panier panier,
+  });
+  Future<Either<Failure, void>> deleteReservation({
+    required int reservationId,
+  });
   Future<Either<Failure, List<Reservation>>> getAllReservations();
 }

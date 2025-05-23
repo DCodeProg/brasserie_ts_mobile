@@ -42,8 +42,6 @@ import 'features/reservations/domain/repositories/reservations_repository.dart';
 import 'features/reservations/domain/usecases/create_reservation.dart';
 import 'features/reservations/domain/usecases/delete_reservation.dart';
 import 'features/reservations/domain/usecases/get_all_reservations.dart';
-import 'features/reservations/domain/usecases/get_reservation_by_id.dart';
-import 'features/reservations/domain/usecases/update_reservation.dart';
 import 'features/reservations/presentation/bloc/reservations_bloc.dart';
 
 GetIt getIt = GetIt.instance;
@@ -182,16 +180,12 @@ void initReservations() {
     ..registerFactory(() => CreateReservation(reservationsRepository: getIt()))
     ..registerFactory(() => DeleteReservation(reservationsRepository: getIt()))
     ..registerFactory(() => GetAllReservations(reservationsRepository: getIt()))
-    ..registerFactory(() => GetReservationById(reservationsRepository: getIt()))
-    ..registerFactory(() => UpdateReservation(reservationsRepository: getIt()))
     // Bloc
     ..registerLazySingleton(
       () => ReservationsBloc(
         createReservation: getIt(),
         deleteReservation: getIt(),
         getAllReservations: getIt(),
-        getReservationById: getIt(),
-        updateReservation: getIt(),
       ),
     );
 }

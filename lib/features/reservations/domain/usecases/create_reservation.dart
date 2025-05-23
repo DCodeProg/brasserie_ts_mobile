@@ -2,22 +2,28 @@ import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecase/usecase.dart';
+import '../../../panier/domain/entities/panier.dart';
 import '../entities/reservation.dart';
 import '../repositories/reservations_repository.dart';
 
-class CreateReservation implements UseCase<Reservation, ReservationParams> {
+class CreateReservation
+    implements UseCase<Reservation, CreateReservationParams> {
   final ReservationsRepository reservationsRepository;
 
   CreateReservation({required this.reservationsRepository});
 
   @override
-  Future<Either<Failure, Reservation>> call(ReservationParams params) async {
-    return await reservationsRepository.createReservation(params.reservation);
+  Future<Either<Failure, Reservation>> call(
+    CreateReservationParams params,
+  ) async {
+    return await reservationsRepository.createReservation(
+      panier: params.panier,
+    );
   }
 }
 
-class ReservationParams {
-  final Reservation reservation;
+class CreateReservationParams {
+  final Panier panier;
 
-  ReservationParams({required this.reservation});
+  CreateReservationParams({required this.panier});
 }
