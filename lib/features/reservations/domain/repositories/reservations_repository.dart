@@ -5,7 +5,7 @@ import '../../../panier/domain/entities/panier.dart';
 import '../entities/reservation.dart';
 
 abstract interface class ReservationsRepository {
-  Future<Either<Failure, Reservation>> createReservation({
+  Future<Either<Failure, List<Reservation>>> createReservation({
     required Panier panier,
   });
   Future<Either<Failure, void>> deleteReservation({

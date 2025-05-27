@@ -12,11 +12,15 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
   ReservationsRepositoryImpl({required this.remoteDatasource});
 
   @override
-  Future<Either<Failure, Reservation>> createReservation({
+  Future<Either<Failure, List<Reservation>>> createReservation({
     required Panier panier,
-  }) {
-    // TODO: implement createReservation
-    throw UnimplementedError();
+  }) async {
+    try {
+      final reservations = await remoteDatasource.createReservation(panier);
+      return right(reservations);
+    } catch (e) {
+      return left(ServerFailure(message: e.toString()));
+    }
   }
 
   @override

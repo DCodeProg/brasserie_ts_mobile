@@ -7,13 +7,15 @@ import '../entities/reservation.dart';
 import '../repositories/reservations_repository.dart';
 
 class CreateReservation
-    implements UseCase<Reservation, CreateReservationParams> {
+    implements UseCase<List<Reservation>, CreateReservationParams> {
   final ReservationsRepository reservationsRepository;
 
-  CreateReservation({required this.reservationsRepository});
+  CreateReservation({
+    required this.reservationsRepository,
+  });
 
   @override
-  Future<Either<Failure, Reservation>> call(
+  Future<Either<Failure, List<Reservation>>> call(
     CreateReservationParams params,
   ) async {
     return await reservationsRepository.createReservation(
@@ -25,5 +27,7 @@ class CreateReservation
 class CreateReservationParams {
   final Panier panier;
 
-  CreateReservationParams({required this.panier});
+  CreateReservationParams({
+    required this.panier,
+  });
 }

@@ -1,3 +1,5 @@
+import 'package:brasserie_ts_mobile/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:brasserie_ts_mobile/features/reservations/presentation/bloc/reservations_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,9 +74,11 @@ class PanierPage extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         color: ColorScheme.of(context).surfaceContainer,
-                        border: Border(top: BorderSide(
-                          color: ColorScheme.of(context).outlineVariant
-                        )),
+                        border: Border(
+                          top: BorderSide(
+                            color: ColorScheme.of(context).outlineVariant,
+                          ),
+                        ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -82,13 +86,46 @@ class PanierPage extends StatelessWidget {
                           children: [
                             SizedBox(
                               width: double.infinity,
-                              child: FilledButton.icon(
-                                onPressed:
-                                    () => context.read<PanierBloc>().add(
+                              child: BlocListener<
+                                ReservationsBloc,
+                                ReservationsState
+                              >(
+                                listener: (context, state) {
+                                  if (state is ReservationsCreatedState) {
+                                    // La réservation a réussi, on vide le panier
+                                    context.read<PanierBloc>().add(
                                       PanierClearItemsEvent(),
-                                    ),
-                                icon: Icon(Icons.shopping_cart_checkout),
-                                label: Text("Réserver le panier"),
+                                    );
+                                  }
+                                  if (state is ReservationsFailureState) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          state.message,
+                                          style: TextStyle(
+                                            color:
+                                                ColorScheme.of(context).error,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: FilledButton.icon(
+                                  onPressed: () {
+                                    if (context.read<AuthBloc>().state is! AuthSuccessState) {
+                                      context.pushNamed("connexion");
+                                      return;
+                                    }
+                                    context.read<ReservationsBloc>().add(
+                                      ReservationsCreateReservationEvent(
+                                        panier: state.panier,
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(Icons.shopping_cart_checkout),
+                                  label: Text("Réserver le panier"),
+                                ),
                               ),
                             ),
                           ],
