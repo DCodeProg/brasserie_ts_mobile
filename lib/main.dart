@@ -9,7 +9,7 @@ import 'core/theme/text_theme.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/categories/presentation/bloc/categories_bloc.dart';
 import 'features/panier/presentation/bloc/panier_bloc.dart';
-import 'features/produits/presentation/bloc/products_bloc.dart';
+import 'features/products/presentation/bloc/products_bloc.dart';
 import 'features/reservations/presentation/bloc/reservations_bloc.dart';
 import 'init_dependencies.dart';
 

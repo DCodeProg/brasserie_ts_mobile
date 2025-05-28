@@ -1,7 +1,7 @@
 part of 'reservations_bloc.dart';
 
 sealed class ReservationsState extends Equatable {
-  const ReservationsState();  
+  const ReservationsState();
 
   @override
   List<Object> get props => [];
@@ -20,6 +20,15 @@ final class ReservationsLoadedState extends ReservationsState {
   List<Object> get props => [reservations];
 }
 
+final class ReservationsCreatedState extends ReservationsState {
+  final List<Reservation> reservations;
+
+  const ReservationsCreatedState(this.reservations);
+
+  @override
+  List<Object> get props => [reservations];
+}
+
 final class ReservationsEmptyState extends ReservationsState {}
 
 final class ReservationsFailureState extends ReservationsState {
@@ -29,13 +38,4 @@ final class ReservationsFailureState extends ReservationsState {
 
   @override
   List<Object> get props => [message];
-}
-
-final class ReservationsCreatedState extends ReservationsState {
-  final Reservation reservation;
-
-  const ReservationsCreatedState(this.reservation);
-
-  @override
-  List<Object> get props => [reservation];
 }

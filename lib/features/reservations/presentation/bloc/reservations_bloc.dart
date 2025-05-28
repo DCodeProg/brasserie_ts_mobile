@@ -1,29 +1,24 @@
 import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:bloc/bloc.dart';
+import 'package:brasserie_ts_mobile/features/panier/domain/entities/panier.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/reservation.dart';
 import '../../domain/usecases/create_reservation.dart';
 import '../../domain/usecases/delete_reservation.dart';
 import '../../domain/usecases/get_all_reservations.dart';
-import '../../domain/usecases/get_reservation_by_id.dart';
-import '../../domain/usecases/update_reservation.dart';
 
 part 'reservations_event.dart';
 part 'reservations_state.dart';
 
 class ReservationsBloc extends Bloc<ReservationsEvent, ReservationsState> {
   final CreateReservation createReservation;
-  final UpdateReservation updateReservation;
   final DeleteReservation deleteReservation;
-  final GetReservationById getReservationById;
   final GetAllReservations getAllReservations;
 
   ReservationsBloc({
     required this.createReservation,
-    required this.updateReservation,
     required this.deleteReservation,
-    required this.getReservationById,
     required this.getAllReservations,
   }) : super(ReservationsInitialState()) {
     on<ReservationsCreateReservationEvent>(
@@ -32,14 +27,6 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationsState> {
 
     on<ReservationsDeleteReservationEvent>(
       (event, emit) => _onDeleteReservationEvent(event, emit),
-    );
-
-    on<ReservationsUpdateReservationEvent>(
-      (event, emit) => _onUpdateReservationEvent(event, emit),
-    );
-
-    on<ReservationsGetReservationByIdEvent>(
-      (event, emit) => _onGetReservationByIdEvent(event, emit),
     );
 
     on<ReservationsGetAllReservationsEvent>(
@@ -56,7 +43,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationsState> {
     emit(ReservationsLoadingState());
 
     final res = await createReservation(
-      ReservationParams(reservation: event.reservation),
+      CreateReservationParams(panier: event.panier),
     );
 
     res.fold(
@@ -89,41 +76,6 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationsState> {
       (l) => emit(ReservationsFailureState(l.message)),
       (r) => add(ReservationsGetAllReservationsEvent()),
     );
-  }
-
-  Future<void> _onUpdateReservationEvent(
-    ReservationsUpdateReservationEvent event,
-    Emitter emit,
-  ) async {
-    emit(ReservationsLoadingState());
-
-    final res = await updateReservation(
-      UpdateReservationParams(reservation: event.reservation),
-    );
-
-    res.fold(
-      (l) => emit(ReservationsFailureState(l.message)),
-      (r) => emit(ReservationsCreatedState(r)),
-    );
-  }
-
-  Future<void> _onGetReservationByIdEvent(
-    ReservationsGetReservationByIdEvent event,
-    Emitter emit,
-  ) async {
-    emit(ReservationsLoadingState());
-
-    final res = await getReservationById(
-      GetReservationByIdParams(reservationId: event.reservationId),
-    );
-
-    res.fold((l) => emit(ReservationsFailureState(l.message)), (r) {
-      if (r != null) {
-        emit(ReservationsLoadedState([r]));
-      } else {
-        emit(ReservationsFailureState('Reservation not found'));
-      }
-    });
   }
 
   Future<void> _onGetAllReservationsEvent(

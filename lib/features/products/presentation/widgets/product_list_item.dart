@@ -4,8 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../categories/domain/entities/category.dart';
-import '../../../categories/presentation/bloc/categories_bloc.dart';
 import '../../../panier/presentation/bloc/panier_bloc.dart';
 import '../../domain/entities/product.dart';
 
@@ -26,53 +24,56 @@ class ProductListItem extends StatelessWidget {
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: InkWell(
         onTap: openProductDetailPage,
-        child: Column(
-          children: [
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 110,
-                    color: ColorScheme.of(context).surfaceContainerHigh,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [_ProductImage(product: product)],
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 16,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            product.nom,
-                            style: TextTheme.of(context).titleMedium,
-                          ),
-                          _ProductDetails(product: product),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        child: _CardContent(product: product),
       ),
+    );
+  }
+}
+
+class _CardContent extends StatelessWidget {
+  const _CardContent({required this.product});
+
+  final Product product;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ProductImage(product: product),
+              _ProductDescriptif(product: product),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
 
 class _ProductImage extends StatelessWidget {
   const _ProductImage({required this.product});
+
+  final Product product;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 110,
+      color: ColorScheme.of(context).surfaceContainerHigh,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [_ImageContainer(product: product)],
+      ),
+    );
+  }
+}
+
+class _ImageContainer extends StatelessWidget {
+  const _ImageContainer({required this.product});
 
   final Product product;
 
@@ -96,6 +97,33 @@ class _ProductImage extends StatelessWidget {
   }
 }
 
+class _ProductDescriptif extends StatelessWidget {
+  const _ProductDescriptif({required this.product});
+
+  final Product product;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              product.name,
+              style: TextTheme.of(context).titleMedium,
+            ),
+            _ProductDetails(product: product),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ProductDetails extends StatelessWidget {
   const _ProductDetails({required this.product});
 
@@ -105,11 +133,14 @@ class _ProductDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     void addToCart() {
       context.read<PanierBloc>().add(
-        PanierAddItemEvent(itemId: product.id, quantite: 1),
+        PanierAddItemEvent(
+          product: product,
+          quantity: 1,
+        ),
       );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("${product.nom} ajouté au panier"),
+          content: Text("${product.name} ajouté au panier"),
           duration: Durations.extralong1,
         ),
       );
@@ -142,7 +173,7 @@ class _ProductDetails extends StatelessWidget {
             IconButton.filled(
               iconSize: 20,
               visualDensity: VisualDensity(horizontal: -2, vertical: -2),
-              onPressed: product.quantite > 0 ? addToCart : null,
+              onPressed: product.quantity > 0 ? addToCart : null,
               icon: Icon(Icons.add_shopping_cart),
             ),
           ],
@@ -164,38 +195,18 @@ class _ProductCategory extends StatelessWidget {
       children: [
         Icon(Icons.category_outlined, size: 12),
         SizedBox(width: 4),
-        BlocBuilder<CategoriesBloc, CategoriesState>(
-          builder: (context, state) {
-            switch (state) {
-              case CategoriesLoadedState():
-                if (product.categorieId == null) {
-                  return Text(
-                    "Non catégorisé",
-                    style: TextTheme.of(context).labelSmall?.copyWith(
-                      color: ColorScheme.of(context).onSurfaceVariant,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  );
-                }
-
-                final Category? category = context
-                    .read<CategoriesBloc>()
-                    .getCategoryById(product.categorieId!);
-
-                return Text(
-                  category != null ? category.nom : "Autres",
-                  style: TextTheme.of(context).labelSmall,
-                );
-
-              case _:
-                return Text(
-                  "Indisponible",
-                  style: TextTheme.of(context).labelSmall?.copyWith(
-                    color: ColorScheme.of(context).error,
-                    fontStyle: FontStyle.italic,
-                  ),
-                );
+        Builder(
+          builder: (context) {
+            if (product.category == null) {
+              return Text(
+                "Non catégorisé",
+                style: TextTheme.of(context).labelSmall,
+              );
             }
+            return Text(
+              product.category!.name,
+              style: TextTheme.of(context).labelSmall,
+            );
           },
         ),
       ],
@@ -233,7 +244,7 @@ class _ProductDegre extends StatelessWidget {
         Icon(Icons.thermostat, size: 12),
         SizedBox(width: 4),
         Text(
-          product.degre != null ? "${product.degre}°" : "Inconnu",
+          product.degree != null ? "${product.degree}°" : "Inconnu",
           style: TextTheme.of(context).labelSmall,
         ),
       ],
@@ -266,7 +277,10 @@ class _ProductPrice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("${product.prix.toStringAsFixed(2)}€", style: TextTheme.of(context).titleMedium);
+    return Text(
+      "${product.price.toStringAsFixed(2)}€",
+      style: TextTheme.of(context).titleMedium,
+    );
   }
 }
 
@@ -277,16 +291,20 @@ class _StockIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (product.quantite >= 10) {
+    final availableQuantity =
+        product.quantity -
+        context.read<PanierBloc>().getQuantityForProduct(product.id);
+
+    if (availableQuantity >= 10) {
       return Text(
         "En stock",
         style: TextTheme.of(
           context,
         ).labelSmall?.copyWith(color: ColorScheme.of(context).tertiary),
       );
-    } else if (product.quantite > 0) {
+    } else if (availableQuantity > 0) {
       return Text(
-        "${product.quantite} restant(s)",
+        "$availableQuantity restant(s)",
         style: TextTheme.of(
           context,
         ).labelSmall?.copyWith(color: ColorScheme.of(context).error),

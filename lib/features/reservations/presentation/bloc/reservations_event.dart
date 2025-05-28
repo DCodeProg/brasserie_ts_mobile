@@ -8,39 +8,29 @@ sealed class ReservationsEvent extends Equatable {
 }
 
 final class ReservationsCreateReservationEvent extends ReservationsEvent {
-  final Reservation reservation;
+  final Panier panier;
 
-  const ReservationsCreateReservationEvent(this.reservation);
+  const ReservationsCreateReservationEvent({
+    required this.panier,
+  });
 
   @override
-  List<Object> get props => [reservation];
+  List<Object> get props => [
+    panier,
+  ];
 }
 
 final class ReservationsDeleteReservationEvent extends ReservationsEvent {
   final int reservationId;
 
-  const ReservationsDeleteReservationEvent(this.reservationId);
+  const ReservationsDeleteReservationEvent({
+    required this.reservationId,
+  });
 
   @override
-  List<Object> get props => [reservationId];
-}
-
-final class ReservationsUpdateReservationEvent extends ReservationsEvent {
-  final Reservation reservation;
-
-  const ReservationsUpdateReservationEvent(this.reservation);
-
-  @override
-  List<Object> get props => [reservation];
-}
-
-final class ReservationsGetReservationByIdEvent extends ReservationsEvent {
-  final int reservationId;
-
-  const ReservationsGetReservationByIdEvent(this.reservationId);
-
-  @override
-  List<Object> get props => [reservationId];
+  List<Object> get props => [
+    reservationId,
+  ];
 }
 
 final class ReservationsGetAllReservationsEvent extends ReservationsEvent {

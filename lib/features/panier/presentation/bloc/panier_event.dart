@@ -10,13 +10,13 @@ sealed class PanierEvent extends Equatable {
 final class PanierLoadPanierEvent extends PanierEvent {}
 
 final class PanierAddItemEvent extends PanierEvent {
-  final String itemId;
-  final int quantite;
+  final Product product;
+  final int quantity;
 
-  const PanierAddItemEvent({required this.itemId, required this.quantite});
+  const PanierAddItemEvent({required this.product, required this.quantity});
 
   @override
-  List<Object> get props => [itemId, quantite];
+  List<Object> get props => [product, quantity];
 }
 
 final class PanierRemoveItemEvent extends PanierEvent {
@@ -30,15 +30,15 @@ final class PanierRemoveItemEvent extends PanierEvent {
 
 final class PanierUpdateItemQuantityEvent extends PanierEvent {
   final String itemId;
-  final int quantite;
+  final int quantity;
 
   const PanierUpdateItemQuantityEvent({
     required this.itemId,
-    required this.quantite,
+    required this.quantity,
   });
 
   @override
-  List<Object> get props => [itemId, quantite];
+  List<Object> get props => [itemId, quantity];
 }
 
 final class PanierClearItemsEvent extends PanierEvent {}
