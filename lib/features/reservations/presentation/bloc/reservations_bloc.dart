@@ -1,3 +1,4 @@
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -59,8 +60,18 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationsState> {
     );
 
     res.fold(
-      (l) => emit(ReservationsFailureState(l.message)),
-      (r) => emit(ReservationsCreatedState(r)),
+      (l) {
+        Aptabase.instance.trackEvent('reservation_creation_failed', {
+          'error': l.message,
+        });
+        emit(ReservationsFailureState(l.message));
+      },
+      (r) {
+        Aptabase.instance.trackEvent('reservation_created', {
+          'reservation_id': r.id,
+        });
+        emit(ReservationsCreatedState(r));
+      },
     );
   }
 
