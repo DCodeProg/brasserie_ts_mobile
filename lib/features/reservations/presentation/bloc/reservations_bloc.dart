@@ -54,9 +54,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationsState> {
         emit(ReservationsFailureState(l.message));
       },
       (r) {
-        Aptabase.instance.trackEvent('reservation_created', {
-          'reservation_id': r.id,
-        });
+        Aptabase.instance.trackEvent('reservation_created');
         emit(ReservationsCreatedState(r));
       },
     );
