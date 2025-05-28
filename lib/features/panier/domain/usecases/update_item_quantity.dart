@@ -14,14 +14,17 @@ class UpdateItemQuantity implements UseCase<Panier, UpdateQuantityParams> {
   Future<Either<Failure, Panier>> call(params) async {
     return await panierRepository.updateItemQuantity(
       itemId: params.itemId,
-      quantite: params.quantite,
+      quantity: params.quantity,
     );
   }
 }
 
 class UpdateQuantityParams {
   final String itemId;
-  final int quantite;
+  final int quantity;
 
-  UpdateQuantityParams({required this.itemId, required this.quantite});
+  UpdateQuantityParams({
+    required this.itemId,
+    required this.quantity,
+  });
 }

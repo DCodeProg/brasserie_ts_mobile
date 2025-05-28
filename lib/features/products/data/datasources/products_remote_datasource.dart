@@ -15,7 +15,9 @@ class ProductsRemoteDatasourceImpl implements ProductsRemoteDatasource {
   @override
   Future<List<ProductModel>> fetchAllProducts() async {
     try {
-      final products = await supabaseClient.from('produits').select();
+      final products = await supabaseClient
+        .from('produits')
+        .select('*, categorie(*)'); // Fetch products with their categories
       return products.map((product) => ProductModel.fromMap(product)).toList();
     } on PostgrestException catch (e) {
       throw ServerException(message: e.message);

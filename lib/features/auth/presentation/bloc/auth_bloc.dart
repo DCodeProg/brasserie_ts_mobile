@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import '../../domain/usecases/sign_up.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/usecase/usecase.dart';
@@ -7,6 +6,7 @@ import '../../domain/entities/user.dart';
 import '../../domain/usecases/get_current_user.dart';
 import '../../domain/usecases/sign_in_with_password.dart';
 import '../../domain/usecases/sign_out.dart';
+import '../../domain/usecases/sign_up.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

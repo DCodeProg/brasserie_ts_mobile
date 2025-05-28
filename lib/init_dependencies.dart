@@ -31,19 +31,17 @@ import 'features/panier/domain/usecases/load_panier.dart';
 import 'features/panier/domain/usecases/remove_item.dart';
 import 'features/panier/domain/usecases/update_item_quantity.dart';
 import 'features/panier/presentation/bloc/panier_bloc.dart';
-import 'features/produits/data/datasources/products_remote_datasource.dart';
-import 'features/produits/data/repositories/products_repository_impl.dart';
-import 'features/produits/domain/repositories/products_repository.dart';
-import 'features/produits/domain/usecases/fetch_all_products.dart';
-import 'features/produits/presentation/bloc/products_bloc.dart';
+import 'features/products/data/datasources/products_remote_datasource.dart';
+import 'features/products/data/repositories/products_repository_impl.dart';
+import 'features/products/domain/repositories/products_repository.dart';
+import 'features/products/domain/usecases/fetch_all_products.dart';
+import 'features/products/presentation/bloc/products_bloc.dart';
 import 'features/reservations/data/datasources/reservations_remote_datasource.dart';
 import 'features/reservations/data/repositories/reservations_repository_impl.dart';
 import 'features/reservations/domain/repositories/reservations_repository.dart';
 import 'features/reservations/domain/usecases/create_reservation.dart';
 import 'features/reservations/domain/usecases/delete_reservation.dart';
 import 'features/reservations/domain/usecases/get_all_reservations.dart';
-import 'features/reservations/domain/usecases/get_reservation_by_id.dart';
-import 'features/reservations/domain/usecases/update_reservation.dart';
 import 'features/reservations/presentation/bloc/reservations_bloc.dart';
 
 GetIt getIt = GetIt.instance;
@@ -182,16 +180,12 @@ void initReservations() {
     ..registerFactory(() => CreateReservation(reservationsRepository: getIt()))
     ..registerFactory(() => DeleteReservation(reservationsRepository: getIt()))
     ..registerFactory(() => GetAllReservations(reservationsRepository: getIt()))
-    ..registerFactory(() => GetReservationById(reservationsRepository: getIt()))
-    ..registerFactory(() => UpdateReservation(reservationsRepository: getIt()))
     // Bloc
     ..registerLazySingleton(
       () => ReservationsBloc(
         createReservation: getIt(),
         deleteReservation: getIt(),
         getAllReservations: getIt(),
-        getReservationById: getIt(),
-        updateReservation: getIt(),
       ),
     );
 }

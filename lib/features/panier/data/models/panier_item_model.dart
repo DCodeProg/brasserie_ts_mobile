@@ -1,35 +1,40 @@
 import 'dart:convert';
 
+import '../../../products/data/models/product_model.dart';
 import '../../domain/entities/panier_item.dart';
 
 class PanierItemModel extends PanierItem {
-  const PanierItemModel({required super.id, required super.quantite});
+  const PanierItemModel({
+    required super.product,
+    required super.quantity,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': id,
-      'quantite': quantite,
+      'produit': ProductModel.fromEntity(product).toMap(),
+      'quantite': quantity,
     };
   }
 
   factory PanierItemModel.fromMap(Map<String, dynamic> map) {
     return PanierItemModel(
-      id: map['id'] as String,
-      quantite: map['quantite'] as int,
+      product: ProductModel.fromMap(map['produit'] as Map<String, dynamic>),
+      quantity: map['quantite'] as int,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory PanierItemModel.fromJson(String source) => PanierItemModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory PanierItemModel.fromJson(String source) =>
+      PanierItemModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   PanierItemModel copyWith({
-    String? id,
-    int? quantite,
+    ProductModel? product,
+    int? quantity,
   }) {
     return PanierItemModel(
-      id: id ?? this.id,
-      quantite: quantite ?? this.quantite,
+      product: product ?? this.product,
+      quantity: quantity ?? this.quantity,
     );
   }
 }

@@ -11,7 +11,9 @@ class DeleteReservation implements UseCase<void, DeleteReservationParams> {
 
   @override
   Future<Either<Failure, void>> call(DeleteReservationParams params) async {
-    return await reservationsRepository.deleteReservation(params.reservationId);
+    return await reservationsRepository.deleteReservation(
+      reservationId: params.reservationId,
+    );
   }
 }
 
